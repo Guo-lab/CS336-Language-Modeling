@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+node_modules/
+
+# Local-only sync source; keep the upstream backup outside this repo.
+source-cs336/
