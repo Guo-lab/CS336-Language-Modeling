@@ -1,32 +1,6 @@
-import os
 from collections.abc import Iterable, Sequence
 
-Pair = tuple[bytes, bytes]
-Pretoken = tuple[bytes, ...]
-Vocabulary = dict[int, bytes]
-Merges = list[Pair]
-
-PAT = r"""..."""
-
-
-def train_bpe(
-    input_path: str | os.PathLike[str],
-    vocab_size: int,
-    special_tokens: Sequence[str],
-) -> tuple[Vocabulary, Merges]:
-    raise NotImplementedError
-
-
-def pretokenize(text: str, special_tokens: Sequence[str]) -> list[Pretoken]:
-    raise NotImplementedError
-
-
-def count_pairs(words: Iterable[Pretoken]) -> dict[Pair, int]:
-    raise NotImplementedError
-
-
-def merge_pair(words: Iterable[Pretoken], pair: Pair) -> list[Pretoken]:
-    raise NotImplementedError
+from cs336_basics.bpe import Merges, Pair, Vocabulary, train_bpe
 
 
 class Tokenizer:
