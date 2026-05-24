@@ -5,6 +5,7 @@ import regex
 
 Pair = tuple[bytes, bytes]
 Pretoken = tuple[bytes, ...]  # one regex token represented as a sequence of byte-symbols
+PretokenCounts = dict[Pretoken, int]
 Vocabulary = dict[int, bytes]
 Merges = list[Pair]
 
@@ -33,6 +34,34 @@ def split_text_by_special_tokens(text: str, special_tokens: Sequence[str]) -> li
     return [chunk for chunk in regex.split(special_token_pattern, text) if chunk]
 
 
+def build_pretoken_counts(chunks: Iterable[str]) -> PretokenCounts:
+    """Count repeated pretokens after splitting away special-token chunks."""
+    pretoken_counts: PretokenCounts = {}
+    for chunk in chunks:
+        for pretoken in pretokenize(chunk):
+            pretoken_counts[pretoken] = pretoken_counts.get(pretoken, 0) + 1
+    return pretoken_counts
+
+
+def count_pairs_from_pretoken_counts(pretoken_counts: PretokenCounts) -> dict[Pair, int]:
+    """Count adjacent pairs weighted by each pretoken's frequency."""
+    counts: dict[Pair, int] = {}
+    for pretoken, pretoken_count in pretoken_counts.items():
+        for i in range(len(pretoken) - 1):
+            pair = (pretoken[i], pretoken[i + 1])
+            counts[pair] = counts.get(pair, 0) + pretoken_count
+    return counts
+
+
+def merge_pretoken_counts(pretoken_counts: PretokenCounts, pair: Pair) -> PretokenCounts:
+    """Merge a pair in unique pretokens, preserving and combining frequencies."""
+    updated_counts: PretokenCounts = {}
+    for pretoken, pretoken_count in pretoken_counts.items():
+        merged_pretoken = merge_pair([pretoken], pair)[0]
+        updated_counts[merged_pretoken] = updated_counts.get(merged_pretoken, 0) + pretoken_count
+    return updated_counts
+
+
 def train_bpe(
     input_path: str | os.PathLike[str],
     vocab_size: int,
@@ -41,22 +70,19 @@ def train_bpe(
     with open(input_path, encoding="utf-8") as f:
         corpus = f.read()
     chunks = split_text_by_special_tokens(corpus, special_tokens)
+    pretoken_counts = build_pretoken_counts(chunks)
 
     vocab = build_initial_vocab(special_tokens)
     merges: Merges = []
 
-    pretokens = []
-    for chunk in chunks:
-        pretokens.extend(pretokenize(chunk))
-
     while len(vocab) < vocab_size:
-        counts = count_pairs(pretokens)
+        counts = count_pairs_from_pretoken_counts(pretoken_counts)
         if not counts:
             break
         best_pair = max(counts, key=lambda candidate: (counts[candidate], candidate))
         merges.append(best_pair)
         vocab[len(vocab)] = best_pair[0] + best_pair[1]
-        pretokens = merge_pair(pretokens, best_pair)
+        pretoken_counts = merge_pretoken_counts(pretoken_counts, best_pair)
 
     return vocab, merges
 

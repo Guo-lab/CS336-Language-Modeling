@@ -18,10 +18,14 @@ if str(ROOT) not in sys.path:
 from cs336_basics.bpe import (  # noqa: E402
     Pair,
     Pretoken,
+    PretokenCounts,
     Vocabulary,
+    build_pretoken_counts,
     build_initial_vocab,
     count_pairs,
+    count_pairs_from_pretoken_counts,
     merge_pair,
+    merge_pretoken_counts,
     pretokenize,
     split_text_by_special_tokens,
     train_bpe,
@@ -41,6 +45,28 @@ class PairCountCase:
     name: str
     words: list[Pretoken]
     expected: dict[Pair, int]
+
+
+@dataclass(frozen=True)
+class PretokenCountCase:
+    name: str
+    chunks: list[str]
+    expected: PretokenCounts
+
+
+@dataclass(frozen=True)
+class WeightedPairCountCase:
+    name: str
+    pretoken_counts: PretokenCounts
+    expected: dict[Pair, int]
+
+
+@dataclass(frozen=True)
+class MergePretokenCountCase:
+    name: str
+    pretoken_counts: PretokenCounts
+    pair: Pair
+    expected: PretokenCounts
 
 
 @dataclass(frozen=True)
@@ -115,6 +141,70 @@ def print_pair_count_case(case: PairCountCase) -> bool:
 
     try:
         result = count_pairs(case.words)
+    except Exception as exc:
+        print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
+        return False
+
+    print(f"result:   {result!r}")
+
+    if result == case.expected:
+        print(pass_text())
+        return True
+
+    print(fail_text("FAIL: result does not match expected"))
+    return False
+
+
+def print_pretoken_count_case(case: PretokenCountCase) -> bool:
+    print(title(f"\n== {case.name} =="))
+    print(f"chunks: {case.chunks!r}")
+    print(f"expected: {case.expected!r}")
+
+    try:
+        result = build_pretoken_counts(case.chunks)
+    except Exception as exc:
+        print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
+        return False
+
+    print(f"result:   {result!r}")
+
+    if result == case.expected:
+        print(pass_text())
+        return True
+
+    print(fail_text("FAIL: result does not match expected"))
+    return False
+
+
+def print_weighted_pair_count_case(case: WeightedPairCountCase) -> bool:
+    print(title(f"\n== {case.name} =="))
+    print(f"pretoken_counts: {case.pretoken_counts!r}")
+    print(f"expected: {case.expected!r}")
+
+    try:
+        result = count_pairs_from_pretoken_counts(case.pretoken_counts)
+    except Exception as exc:
+        print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
+        return False
+
+    print(f"result:   {result!r}")
+
+    if result == case.expected:
+        print(pass_text())
+        return True
+
+    print(fail_text("FAIL: result does not match expected"))
+    return False
+
+
+def print_merge_pretoken_count_case(case: MergePretokenCountCase) -> bool:
+    print(title(f"\n== {case.name} =="))
+    print(f"pretoken_counts: {case.pretoken_counts!r}")
+    print(f"pair: {case.pair!r}")
+    print(f"expected: {case.expected!r}")
+
+    try:
+        result = merge_pretoken_counts(case.pretoken_counts, case.pair)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -321,6 +411,48 @@ def main() -> int:
     passed += sum(print_pair_count_case(case) for case in pair_count_cases)
     total += len(pair_count_cases)
 
+    pretoken_count_cases = [
+        PretokenCountCase(
+            "count repeated pretokens across chunks",
+            ["ab ab", "ab"],
+            {
+                as_pretoken("ab"): 2,
+                as_pretoken(" ab"): 1,
+            },
+        ),
+        PretokenCountCase("empty chunks produce no counts", ["", ""], {}),
+    ]
+
+    print(title("\nPretoken Count Sanity Checks"))
+    passed += sum(print_pretoken_count_case(case) for case in pretoken_count_cases)
+    total += len(pretoken_count_cases)
+
+    weighted_pair_count_cases = [
+        WeightedPairCountCase(
+            "weight pair counts by pretoken frequency",
+            {
+                as_pretoken("ab"): 3,
+                as_pretoken("ac"): 2,
+            },
+            {
+                (b"a", b"b"): 3,
+                (b"a", b"c"): 2,
+            },
+        ),
+        WeightedPairCountCase(
+            "skip short counted pretokens",
+            {
+                (): 5,
+                (b"x",): 4,
+            },
+            {},
+        ),
+    ]
+
+    print(title("\nWeighted Pair Count Sanity Checks"))
+    passed += sum(print_weighted_pair_count_case(case) for case in weighted_pair_count_cases)
+    total += len(weighted_pair_count_cases)
+
     merge_pair_cases = [
         MergePairCase(
             "merge one pair",
@@ -351,6 +483,36 @@ def main() -> int:
     print(title("\nMerge Pair Sanity Checks"))
     passed += sum(print_merge_pair_case(case) for case in merge_pair_cases)
     total += len(merge_pair_cases)
+
+    merge_pretoken_count_cases = [
+        MergePretokenCountCase(
+            "merge counted pretokens",
+            {
+                as_pretoken("ab"): 2,
+                as_pretoken("cab"): 1,
+            },
+            (b"a", b"b"),
+            {
+                (b"ab",): 2,
+                (b"c", b"ab"): 1,
+            },
+        ),
+        MergePretokenCountCase(
+            "combine counts when merges collide",
+            {
+                as_pretoken("ab"): 2,
+                (b"ab",): 3,
+            },
+            (b"a", b"b"),
+            {
+                (b"ab",): 5,
+            },
+        ),
+    ]
+
+    print(title("\nMerge Pretoken Count Sanity Checks"))
+    passed += sum(print_merge_pretoken_count_case(case) for case in merge_pretoken_count_cases)
+    total += len(merge_pretoken_count_cases)
 
     train_bpe_cases = [
         TrainBpeCase(

@@ -98,7 +98,7 @@ make_run_id() {
   datestamp="$(date +%Y%m%d)"
 
   if [[ -n "${DESC:-}" ]]; then
-    printf '%s_%s_%s\n' "$datestamp" "$DESC" "$default_suffix"
+    printf '%s_%s_%s\n' "$datestamp" "$default_suffix" "$DESC"
   else
     printf '%s_%s\n' "$datestamp" "$default_suffix"
   fi
