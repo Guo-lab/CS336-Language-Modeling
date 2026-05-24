@@ -1,6 +1,6 @@
 from collections.abc import Iterable, Sequence
 
-from cs336_basics.bpe import Merges, Pair, Vocabulary, train_bpe
+from cs336_basics.bpe import Merges, Pair, Vocabulary
 
 
 class Tokenizer:

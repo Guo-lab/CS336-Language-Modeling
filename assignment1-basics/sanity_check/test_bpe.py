@@ -16,21 +16,16 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from cs336_basics.bpe import (  # noqa: E402
+    BPETrainer,
     Pair,
     Pretoken,
     PretokenCounts,
     Vocabulary,
-    build_pretoken_counts,
-    build_initial_vocab,
-    count_pairs,
-    count_pairs_from_pretoken_counts,
-    merge_pair,
-    merge_pretoken_counts,
-    pretokenize,
-    split_text_by_special_tokens,
-    train_bpe,
 )
 from sanity_check.utils import fail_text, pass_text, title, warn_text  # noqa: E402
+
+
+TRAINER = BPETrainer(vocab_size=999, special_tokens=[])
 
 
 @dataclass(frozen=True)
@@ -117,7 +112,7 @@ def print_case(case: Case) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = pretokenize(case.text)
+        result = TRAINER.pretokenize(case.text)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -140,7 +135,7 @@ def print_pair_count_case(case: PairCountCase) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = count_pairs(case.words)
+        result = TRAINER.count_pairs(case.words)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -161,7 +156,7 @@ def print_pretoken_count_case(case: PretokenCountCase) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = build_pretoken_counts(case.chunks)
+        result = TRAINER.build_pretoken_counts(case.chunks)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -182,7 +177,7 @@ def print_weighted_pair_count_case(case: WeightedPairCountCase) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = count_pairs_from_pretoken_counts(case.pretoken_counts)
+        result = TRAINER.count_pairs_from_pretoken_counts(case.pretoken_counts)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -204,7 +199,7 @@ def print_merge_pretoken_count_case(case: MergePretokenCountCase) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = merge_pretoken_counts(case.pretoken_counts, case.pair)
+        result = TRAINER.merge_pretoken_counts(case.pretoken_counts, case.pair)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -226,7 +221,7 @@ def print_merge_pair_case(case: MergePairCase) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = merge_pair(case.words, case.pair)
+        result = TRAINER.merge_pair(case.words, case.pair)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -248,7 +243,7 @@ def print_initial_vocab_case(case: InitialVocabCase) -> bool:
     print(f"expected_items: {case.expected_items!r}")
 
     try:
-        result: Vocabulary = build_initial_vocab(case.special_tokens)
+        result: Vocabulary = TRAINER.build_initial_vocab(case.special_tokens)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -272,7 +267,7 @@ def print_special_split_case(case: SpecialSplitCase) -> bool:
     print(f"expected: {case.expected!r}")
 
     try:
-        result = split_text_by_special_tokens(case.text, case.special_tokens)
+        result = TRAINER.split_text_by_special_tokens(case.text, case.special_tokens)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
@@ -300,7 +295,7 @@ def print_train_bpe_case(case: TrainBpeCase) -> bool:
             f.write(case.text)
             input_path = f.name
 
-        vocab, merges = train_bpe(input_path, case.vocab_size, case.special_tokens)
+        vocab, merges = BPETrainer(case.vocab_size, case.special_tokens).train(input_path)
     except Exception as exc:
         print(fail_text(f"FAIL: raised {type(exc).__name__}: {exc}"))
         return False
