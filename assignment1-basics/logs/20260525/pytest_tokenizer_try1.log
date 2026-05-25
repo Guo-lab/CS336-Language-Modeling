@@ -1,0 +1,57 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260525/pytest_tokenizer_try1.log
+Running pytest files
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== pytest: tests/test_tokenizer.py ==
+pytest args: -q
+
+tests/test_tokenizer.py::test_roundtrip_empty PASSED
+tests/test_tokenizer.py::test_empty_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_roundtrip_single_character PASSED
+tests/test_tokenizer.py::test_single_character_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_roundtrip_single_unicode_character PASSED
+tests/test_tokenizer.py::test_single_unicode_character_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_roundtrip_ascii_string PASSED
+tests/test_tokenizer.py::test_ascii_string_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_roundtrip_unicode_string PASSED
+tests/test_tokenizer.py::test_unicode_string_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_roundtrip_unicode_string_with_special_tokens PASSED
+tests/test_tokenizer.py::test_unicode_string_with_special_tokens_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_overlapping_special_tokens FAILED
+tests/test_tokenizer.py::test_address_roundtrip PASSED
+tests/test_tokenizer.py::test_address_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_german_roundtrip PASSED
+tests/test_tokenizer.py::test_german_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_tinystories_sample_roundtrip PASSED
+tests/test_tokenizer.py::test_tinystories_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_encode_special_token_trailing_newlines PASSED
+tests/test_tokenizer.py::test_encode_special_token_double_newline_non_whitespace PASSED
+tests/test_tokenizer.py::test_encode_iterable_tinystories_sample_roundtrip PASSED
+tests/test_tokenizer.py::test_encode_iterable_tinystories_matches_tiktoken PASSED
+tests/test_tokenizer.py::test_encode_iterable_memory_usage SKIPPED (...)
+tests/test_tokenizer.py::test_encode_memory_usage SKIPPED (rlimit su...)
+
+=================================== FAILURES ===================================
+_______________________ test_overlapping_special_tokens ________________________
+
+    def test_overlapping_special_tokens():
+        tokenizer = get_tokenizer_from_vocab_merges_path(
+            vocab_path=VOCAB_PATH,
+            merges_path=MERGES_PATH,
+            special_tokens=["<|endoftext|>", "<|endoftext|><|endoftext|>"],
+        )
+        test_string = "Hello, how <|endoftext|><|endoftext|> are you?<|endoftext|>"
+    
+        ids = tokenizer.encode(test_string)
+        tokenized_string = [tokenizer.decode([x]) for x in ids]
+        # Ensure the double <|endoftext|><|endoftext|> is preserved as a single token
+>       assert tokenized_string.count("<|endoftext|>") == 1
+E       AssertionError: assert 3 == 1
+E        +  where 3 = <built-in method count of list object at 0x10fffc500>('<|endoftext|>')
+E        +    where <built-in method count of list object at 0x10fffc500> = ['Hello', ',', ' how', ' ', '<|endoftext|>', '<|endoftext|>', ...].count
+
+tests/test_tokenizer.py:259: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_tokenizer.py::test_overlapping_special_tokens - AssertionEr...
+=================== 1 failed, 22 passed, 2 skipped in 1.12s ====================
+FAIL pytest: tests/test_tokenizer.py

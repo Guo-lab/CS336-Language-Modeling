@@ -21,3 +21,11 @@ Full TinyStories run:
 Full OpenWebText sample run:
 
 `.venv/bin/python scripts/train_bpe_experiment.py --input data/owt_train.txt --vocab-size 32000 --special-token '<|endoftext|>' --out-dir artifacts/tokenizers_unoptimized/owt_train_32k --profile --monitor-interval 30`
+
+Tokenizer compression and throughput experiments:
+
+`.venv/bin/python scripts/tokenizer_experiments.py --out-dir artifacts/tokenizer_experiments`
+
+Also serialize train/dev token IDs as `uint16` NumPy arrays:
+
+`.venv/bin/python scripts/tokenizer_experiments.py --out-dir artifacts/tokenizer_experiments --serialize`

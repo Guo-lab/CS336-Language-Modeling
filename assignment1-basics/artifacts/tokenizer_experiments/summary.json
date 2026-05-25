@@ -1,0 +1,28 @@
+{
+  "tinystories_with_tinystories_tokenizer": {
+    "num_documents": 10,
+    "bytes": 8203,
+    "tokens": 1952,
+    "bytes_per_token": 4.202356557377049
+  },
+  "owt_with_owt_tokenizer": {
+    "num_documents": 10,
+    "bytes": 29191,
+    "tokens": 6219,
+    "bytes_per_token": 4.693841453609905
+  },
+  "owt_with_tinystories_tokenizer": {
+    "num_documents": 10,
+    "bytes": 29191,
+    "tokens": 8925,
+    "bytes_per_token": 3.270700280112045
+  },
+  "throughput": {
+    "bytes": 20000000,
+    "tokens": 4612080,
+    "elapsed_seconds": 11.260631874989485,
+    "bytes_per_second": 1776099.2653015463,
+    "pile_825gb_seconds": 464501.0648433163,
+    "pile_825gb_hours": 129.02807356758785
+  }
+}
