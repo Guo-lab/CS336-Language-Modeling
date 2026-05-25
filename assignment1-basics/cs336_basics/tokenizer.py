@@ -25,6 +25,11 @@ class Tokenizer:
         # Reduce O(number_of_merges) to O(1)
         self.merges_rank = {pair: rank for rank, pair in enumerate(merges)}
 
+        # Speedup BPE encoding
+        self.encode_cache: dict[str, list[int]] = {}
+        # Larger caches showed little additional benefit.
+        self.encode_cache_max_size = 150_000
+
     @classmethod
     def from_files(
         cls,
@@ -94,6 +99,10 @@ class Tokenizer:
         """
         Byte-level tokenizer with BPE merges
         """
+        cached_ids = self.encode_cache.get(pretoken)
+        if cached_ids is not None:
+            return cached_ids
+
         token_bytes: bytes = pretoken.encode("utf-8")
         pieces: list[bytes] = [bytes([b]) for b in token_bytes]
 
@@ -113,7 +122,11 @@ class Tokenizer:
                     i += 1
             pieces = merged_pieces
 
-        return [self.token_to_id[piece] for piece in pieces]
+        token_ids = [self.token_to_id[piece] for piece in pieces]
+        if len(self.encode_cache) >= self.encode_cache_max_size:
+            self.encode_cache.clear()
+        self.encode_cache[pretoken] = token_ids
+        return token_ids
 
     def encode(self, text: str) -> list[int]:
         """Encode an input text into a sequence of token IDs."""
