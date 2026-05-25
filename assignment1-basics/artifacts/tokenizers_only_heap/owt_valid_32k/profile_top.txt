@@ -1,0 +1,48 @@
+         1583649461 function calls (1583649435 primitive calls) in 424.934 seconds
+
+   Ordered by: cumulative time
+   List reduced from 141 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       13    5.152    0.396  433.134   33.318 threading.py:637(wait)
+ 34801662  136.734    0.000  204.461    0.000 {built-in method _heapq.heappop}
+  3336392   29.328    0.000  191.076    0.000 bpe.py:88(remove)
+    31743   11.059    0.000  187.986    0.006 bpe.py:68(best_pair)
+       12    0.037    0.003  178.628   14.886 threading.py:323(wait)
+    31743    2.442    0.000  146.169    0.005 bpe.py:251(merge_pair_in_state)
+       13    0.015    0.001  103.092    7.930 {built-in method builtins.print}
+ 60196351   25.527    0.000   60.593    0.000 bpe.py:163(iter_pretokens)
+  3963878   13.429    0.000   43.068    0.000 bpe.py:82(add)
+ 40875945   27.252    0.000   36.354    0.000 bpe.py:102(push_pair)
+       51   28.627    0.561   30.231    0.593 {method 'acquire' of '_thread.lock' objects}
+197939817   25.037    0.000   30.184    0.000 bpe.py:32(__eq__)
+349368278   22.958    0.000   22.958    0.000 bpe.py:172(<genexpr>)
+        1    1.946    1.946   21.739   21.739 bpe.py:179(build_pretoken_counts)
+  7300270   17.306    0.000   19.838    0.000 bpe.py:36(count_pairs_in_pretoken)
+164515742   16.046    0.000   16.046    0.000 {method 'get' of 'dict' objects}
+ 66810076    7.988    0.000   15.294    0.000 bpe.py:45(add_pretoken_count)
+        1    0.012    0.012   12.003   12.003 bpe.py:137(train)
+    59059    8.331    0.000    8.331    0.000 {method 'findall' of '_regex.Pattern' objects}
+        1    0.056    0.056    7.567    7.567 bpe.py:57(__init__)
+175324694    7.559    0.000    7.559    0.000 bpe.py:29(__lt__)
+  3336392    4.810    0.000    7.020    0.000 bpe.py:208(merge_pretoken)
+ 40875945    6.262    0.000    6.285    0.000 {built-in method _heapq.heappush}
+197940005    5.147    0.000    5.147    0.000 {built-in method builtins.isinstance}
+ 19931803    4.099    0.000    4.099    0.000 {method 'discard' of 'set' objects}
+ 60137293    3.777    0.000    3.777    0.000 {method 'encode' of 'str' objects}
+ 21183549    3.405    0.000    3.405    0.000 {method 'add' of 'set' objects}
+ 40875945    2.816    0.000    2.816    0.000 bpe.py:26(__init__)
+ 21183549    2.009    0.000    2.009    0.000 {method 'setdefault' of 'dict' objects}
+ 50962850    1.774    0.000    1.774    0.000 {built-in method builtins.len}
+  3336392    1.474    0.000    1.474    0.000 {method 'pop' of 'dict' objects}
+        1    0.652    0.652    0.768    0.768 {method 'read' of '_io.TextIOWrapper' objects}
+ 11933674    0.715    0.000    0.715    0.000 {method 'append' of 'list' objects}
+  7332016    0.465    0.000    0.465    0.000 {method 'items' of 'dict' objects}
+    31743    0.371    0.000    0.387    0.000 bpe.py:79(affected_pretokens)
+        1    0.017    0.017    0.194    0.194 bpe.py:124(split_text_by_special_tokens)
+        1    0.000    0.000    0.177    0.177 _main.py:324(split)
+        1    0.176    0.176    0.176    0.176 {method 'split' of '_regex.Pattern' objects}
+        1    0.000    0.000    0.116    0.116 <frozen codecs>:319(decode)
+        1    0.116    0.116    0.116    0.116 {built-in method _codecs.utf_8_decode}
+
+

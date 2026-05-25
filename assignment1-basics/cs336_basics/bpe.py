@@ -1,5 +1,6 @@
 import os
 from collections.abc import Iterable, Sequence
+from heapq import heappop, heappush
 
 import regex
 
@@ -9,6 +10,7 @@ PretokenCounts = dict[Pretoken, int]
 Pair = tuple[bytes, bytes]
 PairCounts = dict[Pair, int]
 PairIndex = dict[Pair, set[Pretoken]]
+PairHeapEntry = tuple[int, "_MaxPairKey", Pair]
 
 Vocabulary = dict[int, bytes]
 Merges = list[Pair]
@@ -16,6 +18,19 @@ Merges = list[Pair]
 
 PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 PAT_RE = regex.compile(PAT)
+
+
+class _MaxPairKey:
+    """Heap key that orders lexicographically larger pairs first."""
+
+    def __init__(self, pair: Pair) -> None:
+        self.pair = pair
+
+    def __lt__(self, other: "_MaxPairKey") -> bool:
+        return self.pair > other.pair
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, _MaxPairKey) and self.pair == other.pair
 
 
 def count_pairs_in_pretoken(pretoken: Pretoken) -> PairCounts:
@@ -42,6 +57,7 @@ class PairState:
     def __init__(self, pretoken_counts: PretokenCounts) -> None:
         self.counts: PairCounts = {}
         self.index: PairIndex = {}
+        self.heap: list[PairHeapEntry] = []
 
         for pretoken, pretoken_count in pretoken_counts.items():
             self.add(pretoken, pretoken_count)
@@ -50,7 +66,15 @@ class PairState:
         return bool(self.counts)
 
     def best_pair(self) -> Pair:
-        return max(self.counts, key=lambda candidate: (self.counts[candidate], candidate))
+        while self.heap:
+            # Lazy invalidation: The heap may contain stale entries because pair counts are updated
+            # by pushing new entries instead of deleting old ones. Discard popped entries whose count
+            # no longer matches self.counts.
+            neg_count, _, pair = heappop(self.heap)
+            count = -neg_count
+            if self.counts.get(pair) == count:
+                return pair
+        raise ValueError("Cannot select a best pair from empty pair state")
 
     def affected_pretokens(self, pair: Pair) -> list[Pretoken]:
         return list(self.index.get(pair, ()))
@@ -59,12 +83,14 @@ class PairState:
         for pair, pair_count in count_pairs_in_pretoken(pretoken).items():
             self.counts[pair] = self.counts.get(pair, 0) + pair_count * pretoken_count
             self.index.setdefault(pair, set()).add(pretoken)
+            self.push_pair(pair)
 
     def remove(self, pretoken: Pretoken, pretoken_count: int) -> None:
         for pair, pair_count in count_pairs_in_pretoken(pretoken).items():
             updated_count = self.counts[pair] - pair_count * pretoken_count
             if updated_count > 0:
                 self.counts[pair] = updated_count
+                self.push_pair(pair)
             else:
                 del self.counts[pair]
 
@@ -72,6 +98,10 @@ class PairState:
             pretokens.discard(pretoken)
             if not pretokens:
                 del self.index[pair]
+
+    def push_pair(self, pair: Pair) -> None:
+        """The Min-Heap pops the largest count first, using lexicographic order as a tie-break."""
+        heappush(self.heap, (-self.counts[pair], _MaxPairKey(pair), pair))
 
 
 class BPETrainer:
@@ -206,12 +236,16 @@ class BPETrainer:
 
     # ! not used by train(); kept for sanity checks.
     @classmethod
-    def merge_pretoken_counts(cls, pretoken_counts: PretokenCounts, pair: Pair) -> PretokenCounts:
+    def merge_pretoken_counts(
+        cls, pretoken_counts: PretokenCounts, pair: Pair
+    ) -> PretokenCounts:
         """Merge a pair in unique pretokens, preserving and combining frequencies."""
         updated_cnts: PretokenCounts = {}
         for pretoken, pretoken_count in pretoken_counts.items():
             merged_pretoken = cls.merge_pretoken(pretoken, pair)
-            updated_cnts[merged_pretoken] = updated_cnts.get(merged_pretoken, 0) + pretoken_count
+            updated_cnts[merged_pretoken] = (
+                updated_cnts.get(merged_pretoken, 0) + pretoken_count
+            )
         return updated_cnts
 
     @classmethod
