@@ -1,11 +1,19 @@
 import os
+import regex
 from collections.abc import Iterable, Sequence
 from heapq import heappop, heappush
+from multiprocessing import Pool
 
-import regex
+from cs336_basics.chunking import (
+    DEFAULT_TARGET_CHUNK_BYTES,
+    iter_chunk_ranges,
+    iter_text_chunks,
+    read_text_chunk,
+)
 
 Pretoken = tuple[bytes, ...]  # one regex token represented as a sequence of byte-symbols
 PretokenCounts = dict[Pretoken, int]
+PretokenCountTask = tuple[str, int, int, tuple[str, ...]]  # (file, start, end, special_tokens)
 
 Pair = tuple[bytes, bytes]
 PairCounts = dict[Pair, int]
@@ -49,6 +57,20 @@ def add_pretoken_count(
 ) -> None:
     """Add count to one pretoken entry, creating it if needed."""
     pretoken_counts[pretoken] = pretoken_counts.get(pretoken, 0) + count
+
+
+def add_pretoken_counts(dst: PretokenCounts, src: PretokenCounts) -> None:
+    """Add all pretoken counts from src into dst."""
+    for pretoken, count in src.items():
+        add_pretoken_count(dst, pretoken, count)
+
+
+def build_pretoken_counts_for_range(task: PretokenCountTask) -> PretokenCounts:
+    """Read one file range and count pretokens in that range."""
+    input_path, start, end, special_tokens = task
+    text = read_text_chunk(input_path, start, end)
+    chunks = BPETrainer.split_text_by_special_tokens(text, special_tokens)
+    return BPETrainer.build_pretoken_counts(chunks)
 
 
 class PairState:
@@ -135,11 +157,7 @@ class BPETrainer:
         return [chunk for chunk in regex.split(special_token_pattern, text) if chunk]
 
     def train(self, input_path: str | os.PathLike[str]) -> tuple[Vocabulary, Merges]:
-        with open(input_path, encoding="utf-8") as f:
-            corpus = f.read()
-
-        chunks = self.split_text_by_special_tokens(corpus, self.special_tokens)
-        pretoken_counts = self.build_pretoken_counts(chunks)
+        pretoken_counts = self.build_pretoken_counts_from_file(input_path)
 
         # Speed key: build pair counts once, plus an inverted index from each
         # pair to the pretokens containing it, so each merge updates only the
@@ -160,6 +178,68 @@ class BPETrainer:
 
         return vocab, merges
 
+    def build_pretoken_counts_from_file(
+        self, input_path: str | os.PathLike[str]
+    ) -> PretokenCounts:
+        """Count pretokens from a file, chunking on special-token boundaries."""
+        target_chunk_bytes = int(
+            os.environ.get("CS336_BPE_CHUNK_BYTES", str(DEFAULT_TARGET_CHUNK_BYTES))
+        )
+        num_workers = int(os.environ.get("CS336_BPE_NUM_WORKERS", "1"))
+        split_special_token = self.split_special_token_bytes()
+
+        if num_workers > 1:
+            return self.build_pretoken_counts_parallel(
+                input_path, split_special_token, target_chunk_bytes, num_workers
+            )
+
+        return self.build_pretoken_counts_serial(
+            input_path, split_special_token, target_chunk_bytes
+        )
+
+    def split_special_token_bytes(self) -> bytes | None:
+        """Return the special token used for chunk boundaries, if any."""
+        if not self.special_tokens:
+            return None
+        return max(self.special_tokens, key=len).encode("utf-8")
+
+    def build_pretoken_counts_serial(
+        self,
+        input_path: str | os.PathLike[str],
+        split_special_token: bytes | None,
+        target_chunk_bytes: int,
+    ) -> PretokenCounts:
+        """Count pretokens from file chunks in the current process."""
+        pretoken_counts: PretokenCounts = {}
+        for text in iter_text_chunks(input_path, split_special_token, target_chunk_bytes):
+            chunks = self.split_text_by_special_tokens(text, self.special_tokens)
+            add_pretoken_counts(pretoken_counts, self.build_pretoken_counts(chunks))
+
+        return pretoken_counts
+
+    def build_pretoken_counts_parallel(
+        self,
+        input_path: str | os.PathLike[str],
+        split_special_token: bytes | None,
+        target_chunk_bytes: int,
+        num_workers: int,
+    ) -> PretokenCounts:
+        """Count pretokens from file chunks across worker processes."""
+        ranges = iter_chunk_ranges(input_path, split_special_token, target_chunk_bytes)
+        tasks = (
+            (os.fspath(input_path), start, end, self.special_tokens) for start, end in ranges
+        )
+
+        pretoken_counts: PretokenCounts = {}
+        with Pool(processes=num_workers) as pool:
+            for chunk_counts in pool.imap_unordered(build_pretoken_counts_for_range, tasks):
+                add_pretoken_counts(pretoken_counts, chunk_counts)
+
+        return pretoken_counts
+
+    # ===================================
+    #           Pretokenization
+    # ===================================
     @staticmethod
     def iter_pretokens(text: str) -> Iterable[Pretoken]:
         """Yield regex pre-tokens as byte-level BPE symbol tuples."""
@@ -185,6 +265,10 @@ class BPETrainer:
                 add_pretoken_count(pretoken_counts, pretoken, 1)
         return pretoken_counts
 
+    # ===================================
+    #           Pair Counting
+    # ===================================
+    # Core pair-counting logic is abstracted above and reused by PairState.
     # ! not used by train(); kept for sanity checks.
     @staticmethod
     def count_pairs(words: Iterable[Pretoken]) -> PairCounts:
@@ -205,6 +289,9 @@ class BPETrainer:
                 counts[pair] = counts.get(pair, 0) + pair_count * pretoken_count
         return counts
 
+    # ===================================
+    #           Merging
+    # ===================================
     @staticmethod
     def merge_pretoken(pretoken: Pretoken, pair: Pair) -> Pretoken:
         """Merge one pair in one pretoken, left-to-right and non-overlapping."""

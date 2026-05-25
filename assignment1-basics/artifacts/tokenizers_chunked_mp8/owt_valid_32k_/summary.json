@@ -1,0 +1,25 @@
+{
+  "input": "data/owt_valid.txt",
+  "vocab_size_requested": 32000,
+  "vocab_size_actual": 32000,
+  "num_merges": 31743,
+  "special_tokens": [
+    "<|endoftext|>"
+  ],
+  "elapsed_seconds": 326.64454979199945,
+  "rss_start_bytes": 27033600,
+  "rss_end_bytes": 4317872128,
+  "max_rss_bytes": 4640342016,
+  "longest_token": {
+    "id": 20610,
+    "hex": "2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d",
+    "nbytes": 64,
+    "utf8_replace": "----------------------------------------------------------------"
+  },
+  "profile": {
+    "profile_stats": "artifacts/tokenizers_chunked_mp8/owt_valid_32k/profile.stats",
+    "profile_top": "artifacts/tokenizers_chunked_mp8/owt_valid_32k/profile_top.txt",
+    "sort": "cumulative",
+    "lines": 40
+  }
+}
