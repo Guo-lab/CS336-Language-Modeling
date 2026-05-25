@@ -1,7 +1,7 @@
 import os
 import regex
 from collections.abc import Iterable, Sequence
-from heapq import heappop, heappush
+from heapq import heapify, heappop, heappush
 from multiprocessing import Pool
 
 from cs336_basics.chunking import (
@@ -76,6 +76,8 @@ def build_pretoken_counts_for_range(task: PretokenCountTask) -> PretokenCounts:
 class PairState:
     """Pair counts plus the pretokens that currently contain each pair."""
 
+    HEAP_REBUILD_RATIO = 8
+
     def __init__(self, pretoken_counts: PretokenCounts) -> None:
         self.counts: PairCounts = {}
         self.index: PairIndex = {}
@@ -88,6 +90,7 @@ class PairState:
         return bool(self.counts)
 
     def best_pair(self) -> Pair:
+        self.maybe_rebuild_heap()
         while self.heap:
             # Lazy invalidation: The heap may contain stale entries because pair counts are updated
             # by pushing new entries instead of deleting old ones. Discard popped entries whose count
@@ -124,6 +127,18 @@ class PairState:
     def push_pair(self, pair: Pair) -> None:
         """The Min-Heap pops the largest count first, using lexicographic order as a tie-break."""
         heappush(self.heap, (-self.counts[pair], _MaxPairKey(pair), pair))
+
+    def maybe_rebuild_heap(self) -> None:
+        """Compact stale heap entries when lazy invalidation has grown too large."""
+        if not self.counts:
+            self.heap.clear()
+            return
+
+        if len(self.heap) <= self.HEAP_REBUILD_RATIO * len(self.counts):
+            return
+
+        self.heap = [(-count, _MaxPairKey(pair), pair) for pair, count in self.counts.items()]
+        heapify(self.heap)
 
 
 class BPETrainer:
