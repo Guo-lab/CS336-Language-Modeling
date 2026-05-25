@@ -94,13 +94,11 @@ run_selected() {
 
 make_run_id() {
   local default_suffix="$1"
-  local datestamp
-  datestamp="$(date +%Y%m%d)"
 
   if [[ -n "${DESC:-}" ]]; then
-    printf '%s_%s_%s\n' "$datestamp" "$default_suffix" "$DESC"
+    printf '%s_%s\n' "$default_suffix" "$DESC"
   else
-    printf '%s_%s\n' "$datestamp" "$default_suffix"
+    printf '%s\n' "$default_suffix"
   fi
 }
 
@@ -126,7 +124,7 @@ main() {
 
   if [[ "${CHECK_LOG:-0}" == "1" ]]; then
     export NO_COLOR=1
-    local log_dir="${LOG_DIR:-$ROOT_DIR/logs}"
+    local log_dir="${LOG_DIR:-$ROOT_DIR/logs}/$(date +%Y%m%d)"
     local run_id
     run_id="$(make_run_id sanity)"
     local log_path="$log_dir/${run_id}.log"

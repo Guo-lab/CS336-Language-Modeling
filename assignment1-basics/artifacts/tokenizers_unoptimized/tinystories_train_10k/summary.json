@@ -1,0 +1,25 @@
+{
+  "input": "data/TinyStoriesV2-GPT4-train.txt",
+  "vocab_size_requested": 10000,
+  "vocab_size_actual": 10000,
+  "num_merges": 9743,
+  "special_tokens": [
+    "<|endoftext|>"
+  ],
+  "elapsed_seconds": 722.7452502909982,
+  "rss_start_bytes": 26034176,
+  "rss_end_bytes": 2728804352,
+  "max_rss_bytes": 6519652352,
+  "longest_token": {
+    "id": 7160,
+    "hex": "206163636f6d706c6973686d656e74",
+    "nbytes": 15,
+    "utf8_replace": " accomplishment"
+  },
+  "profile": {
+    "profile_stats": "artifacts/tokenizers_unoptimized/tinystories_train_10k/profile.stats",
+    "profile_top": "artifacts/tokenizers_unoptimized/tinystories_train_10k/profile_top.txt",
+    "sort": "cumulative",
+    "lines": 40
+  }
+}
