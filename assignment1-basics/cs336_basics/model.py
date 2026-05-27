@@ -47,22 +47,23 @@ class Embedding(nn.Module):
         dtype: torch.dtype | None = None,
     ) -> None:
         """
-        Construct an embedding lookup table.
+        Construct an embedding lookup table. Each row stores the embedding of one token.
         init: N(0, 1) truncated to [-3, 3].
         """
         super().__init__()
         self.num_embeddings = num_embeddings
-        self.embedding_dim = embedding_dim
+        self.embedding_dim = embedding_dim  # Dimension of the embedding vectors, d_model
 
-        # TODO: create self.weight as an nn.Parameter with shape
-        # (num_embeddings, embedding_dim), then initialize it with trunc_normal_.
+        weight_shape = (num_embeddings, embedding_dim)  # (vocab_size, d_model)
+        self.weight = nn.Parameter(torch.empty(weight_shape, device=device, dtype=dtype))
+        nn.init.trunc_normal_(self.weight, mean=0.0, std=1.0, a=-3.0, b=3.0)
 
     def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
         """
         Lookup embedding vectors for token IDs.
         Shape:
-            token_ids: (...)
-            return: (..., embedding_dim)
+            token_ids: (...), usually (batch_size, sequence_length) given by the tokenizer
+                        Each position contains one token ID in [0, num_embeddings).
+            return: (..., embedding_dim), usually (batch_size, sequence_length, embedding_dim)
         """
-        # TODO: return rows from self.weight indexed by token_ids.
-        raise NotImplementedError
+        return self.weight[token_ids]
