@@ -11,6 +11,7 @@ from torch import Tensor
 
 
 from cs336_basics.bpe import BPETrainer
+from cs336_basics.model import Embedding, Linear
 from cs336_basics.tokenizer import Tokenizer
 
 
@@ -33,7 +34,9 @@ def run_linear(
         Float[Tensor, "... d_out"]: The transformed output of your linear module.
     """
 
-    raise NotImplementedError
+    linear = Linear(d_in, d_out, device=weights.device, dtype=weights.dtype)
+    linear.load_state_dict({"weight": weights})
+    return linear(in_features)
 
 
 def run_embedding(
@@ -55,6 +58,9 @@ def run_embedding(
         Float[Tensor, "... d_model"]: Batch of embeddings returned by your Embedding layer.
     """
 
+    # TODO: create Embedding(vocab_size, d_model), load {"weight": weights},
+    # and return embedding(token_ids).
+    _ = Embedding
     raise NotImplementedError
 
 
