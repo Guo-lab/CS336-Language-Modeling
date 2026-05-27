@@ -1,0 +1,104 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260526/pytest_rmsnorm.log
+Running pytest files
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== pytest: tests/test_model.py ==
+pytest args: --tb=short
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics
+configfile: pyproject.toml
+plugins: jaxtyping-0.3.10, timeout-2.4.0
+collected 13 items
+
+tests/test_model.py::test_linear PASSED
+tests/test_model.py::test_embedding PASSED
+tests/test_model.py::test_swiglu FAILED
+tests/test_model.py::test_scaled_dot_product_attention FAILED
+tests/test_model.py::test_4d_scaled_dot_product_attention FAILED
+tests/test_model.py::test_multihead_self_attention FAILED
+tests/test_model.py::test_multihead_self_attention_with_rope FAILED
+tests/test_model.py::test_transformer_lm FAILED
+tests/test_model.py::test_transformer_lm_truncated_input FAILED
+tests/test_model.py::test_transformer_block FAILED
+tests/test_model.py::test_rmsnorm PASSED
+tests/test_model.py::test_rope FAILED
+tests/test_model.py::test_silu_matches_pytorch FAILED
+
+=================================== FAILURES ===================================
+_________________________________ test_swiglu __________________________________
+tests/test_model.py:46: in test_swiglu
+    actual_output = run_swiglu(
+tests/adapters.py:95: in run_swiglu
+    raise NotImplementedError
+E   NotImplementedError
+______________________ test_scaled_dot_product_attention _______________________
+tests/test_model.py:58: in test_scaled_dot_product_attention
+    actual_output = run_scaled_dot_product_attention(Q=q, K=k, V=v, mask=mask)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/adapters.py:116: in run_scaled_dot_product_attention
+    raise NotImplementedError
+E   NotImplementedError
+_____________________ test_4d_scaled_dot_product_attention _____________________
+tests/test_model.py:70: in test_4d_scaled_dot_product_attention
+    actual_output = run_scaled_dot_product_attention(Q=q, K=k, V=v, mask=mask)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/adapters.py:116: in run_scaled_dot_product_attention
+    raise NotImplementedError
+E   NotImplementedError
+________________________ test_multihead_self_attention _________________________
+tests/test_model.py:82: in test_multihead_self_attention
+    actual_output = run_multihead_self_attention(
+tests/adapters.py:150: in run_multihead_self_attention
+    raise NotImplementedError
+E   NotImplementedError
+___________________ test_multihead_self_attention_with_rope ____________________
+tests/test_model.py:102: in test_multihead_self_attention_with_rope
+    actual_output = run_multihead_self_attention_with_rope(
+tests/adapters.py:190: in run_multihead_self_attention_with_rope
+    raise NotImplementedError
+E   NotImplementedError
+_____________________________ test_transformer_lm ______________________________
+tests/test_model.py:122: in test_transformer_lm
+    actual_output = run_transformer_lm(
+tests/adapters.py:367: in run_transformer_lm
+    raise NotImplementedError
+E   NotImplementedError
+_____________________ test_transformer_lm_truncated_input ______________________
+tests/test_model.py:140: in test_transformer_lm_truncated_input
+    truncated_actual_output = run_transformer_lm(
+tests/adapters.py:367: in run_transformer_lm
+    raise NotImplementedError
+E   NotImplementedError
+____________________________ test_transformer_block ____________________________
+tests/test_model.py:161: in test_transformer_block
+    actual_output = run_transformer_block(
+tests/adapters.py:285: in run_transformer_block
+    raise NotImplementedError
+E   NotImplementedError
+__________________________________ test_rope ___________________________________
+tests/test_model.py:187: in test_rope
+    output = run_rope(
+tests/adapters.py:212: in run_rope
+    raise NotImplementedError
+E   NotImplementedError
+__________________________ test_silu_matches_pytorch ___________________________
+tests/test_model.py:201: in test_silu_matches_pytorch
+    actual_output = run_silu(x)
+                    ^^^^^^^^^^^
+tests/adapters.py:406: in run_silu
+    raise NotImplementedError
+E   NotImplementedError
+=========================== short test summary info ============================
+FAILED tests/test_model.py::test_swiglu - NotImplementedError
+FAILED tests/test_model.py::test_scaled_dot_product_attention - NotImplemente...
+FAILED tests/test_model.py::test_4d_scaled_dot_product_attention - NotImpleme...
+FAILED tests/test_model.py::test_multihead_self_attention - NotImplementedError
+FAILED tests/test_model.py::test_multihead_self_attention_with_rope - NotImpl...
+FAILED tests/test_model.py::test_transformer_lm - NotImplementedError
+FAILED tests/test_model.py::test_transformer_lm_truncated_input - NotImplemen...
+FAILED tests/test_model.py::test_transformer_block - NotImplementedError
+FAILED tests/test_model.py::test_rope - NotImplementedError
+FAILED tests/test_model.py::test_silu_matches_pytorch - NotImplementedError
+========================= 10 failed, 3 passed in 0.10s =========================
+FAIL pytest: tests/test_model.py
