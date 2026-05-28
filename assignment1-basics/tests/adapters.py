@@ -18,6 +18,7 @@ from cs336_basics.model import (
     RMSNorm,
     RotaryPositionalEmbedding,
     SwiGLU,
+    TransformerBlock,
 )
 from cs336_basics.nn_utils import scaled_dot_product_attention, softmax
 from cs336_basics.tokenizer import Tokenizer
@@ -210,7 +211,23 @@ def run_multihead_self_attention_with_rope(
         Float[Tensor, " ... sequence_length d_model"]: Tensor with the output of running your optimized, batched multi-headed attention
         implementation with the given QKV projection weights and input features.
     """
-    raise NotImplementedError
+    attention = MultiHeadSelfAttention(
+        d_model=d_model,
+        num_heads=num_heads,
+        rope_theta=theta,
+        max_seq_len=max_seq_len,
+        device=in_features.device,
+        dtype=in_features.dtype,
+    )
+    attention.load_state_dict(
+        {
+            "W_Q.weight": q_proj_weight,
+            "W_K.weight": k_proj_weight,
+            "W_V.weight": v_proj_weight,
+            "W_O.weight": o_proj_weight,
+        }
+    )
+    return attention(in_features, token_positions)
 
 
 def run_rope(
@@ -311,7 +328,31 @@ def run_transformer_block(
         Float[Tensor, "batch sequence_length d_model"] Tensor with the output of
         running the Transformer block on the input features while using RoPE.
     """
-    raise NotImplementedError
+    block = TransformerBlock(
+        d_model=d_model,
+        num_heads=num_heads,
+        d_ff=d_ff,
+        rope_theta=theta,
+        max_seq_len=max_seq_len,
+        device=in_features.device,
+        dtype=in_features.dtype,
+    )
+    block.load_state_dict(
+        {
+            "attn.W_Q.weight": weights["attn.q_proj.weight"],
+            "attn.W_K.weight": weights["attn.k_proj.weight"],
+            "attn.W_V.weight": weights["attn.v_proj.weight"],
+            "attn.W_O.weight": weights["attn.output_proj.weight"],
+            "ln1.weight": weights["ln1.weight"],
+            "ffn.W1.weight": weights["ffn.w1.weight"],
+            "ffn.W2.weight": weights["ffn.w2.weight"],
+            "ffn.W3.weight": weights["ffn.w3.weight"],
+            "ln2.weight": weights["ln2.weight"],
+        }
+    )
+    token_positions = torch.arange(in_features.shape[-2], device=in_features.device)
+    token_positions = rearrange(token_positions, "seq -> 1 seq")
+    return block(in_features, token_positions)
 
 
 def run_transformer_lm(

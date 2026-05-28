@@ -1,4 +1,4 @@
-log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260527/pytest_multi-head-attention.log
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260527/pytest_multihead_self_attention_with_rope.log
 Running pytest files
 python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
 
@@ -33,7 +33,7 @@ tests/test_model.py::test_swiglu PASSED
 tests/test_model.py::test_scaled_dot_product_attention PASSED
 tests/test_model.py::test_4d_scaled_dot_product_attention PASSED
 tests/test_model.py::test_multihead_self_attention PASSED
-tests/test_model.py::test_multihead_self_attention_with_rope FAILED
+tests/test_model.py::test_multihead_self_attention_with_rope PASSED
 tests/test_model.py::test_transformer_lm FAILED
 tests/test_model.py::test_transformer_lm_truncated_input FAILED
 tests/test_model.py::test_transformer_block FAILED
@@ -42,12 +42,11 @@ tests/test_model.py::test_rope PASSED
 tests/test_model.py::test_silu_matches_pytorch FAILED
 
 =========================== short test summary info ============================
-FAILED tests/test_model.py::test_multihead_self_attention_with_rope - NotImpl...
 FAILED tests/test_model.py::test_transformer_lm - NotImplementedError
 FAILED tests/test_model.py::test_transformer_lm_truncated_input - NotImplemen...
 FAILED tests/test_model.py::test_transformer_block - NotImplementedError
 FAILED tests/test_model.py::test_silu_matches_pytorch - NotImplementedError
-========================= 5 failed, 8 passed in 0.06s ==========================
+========================= 4 failed, 9 passed in 0.05s ==========================
 FAIL pytest: tests/test_model.py
 
 == pytest: tests/test_nn_utils.py ==
@@ -66,7 +65,7 @@ tests/test_nn_utils.py::test_gradient_clipping FAILED
 =========================== short test summary info ============================
 FAILED tests/test_nn_utils.py::test_cross_entropy - NotImplementedError
 FAILED tests/test_nn_utils.py::test_gradient_clipping - NotImplementedError
-========================= 2 failed, 1 passed in 0.03s ==========================
+========================= 2 failed, 1 passed in 0.02s ==========================
 FAIL pytest: tests/test_nn_utils.py
 
 == pytest: tests/test_optimizer.py ==
@@ -84,7 +83,7 @@ tests/test_optimizer.py::test_get_lr_cosine_schedule FAILED
 =========================== short test summary info ============================
 FAILED tests/test_optimizer.py::test_adamw - NotImplementedError
 FAILED tests/test_optimizer.py::test_get_lr_cosine_schedule - NotImplementedE...
-============================== 2 failed in 0.50s ===============================
+============================== 2 failed in 0.35s ===============================
 FAIL pytest: tests/test_optimizer.py
 
 == pytest: tests/test_serialization.py ==
@@ -100,7 +99,7 @@ tests/test_serialization.py::test_checkpointing FAILED
 
 =========================== short test summary info ============================
 FAILED tests/test_serialization.py::test_checkpointing - NotImplementedError
-============================== 1 failed in 0.02s ===============================
+============================== 1 failed in 0.01s ===============================
 FAIL pytest: tests/test_serialization.py
 
 == pytest: tests/test_tokenizer.py ==
@@ -138,7 +137,7 @@ tests/test_tokenizer.py::test_encode_iterable_tinystories_matches_tiktoken PASSE
 tests/test_tokenizer.py::test_encode_iterable_memory_usage SKIPPED (...)
 tests/test_tokenizer.py::test_encode_memory_usage SKIPPED (rlimit su...)
 
-======================== 23 passed, 2 skipped in 1.14s =========================
+======================== 23 passed, 2 skipped in 1.13s =========================
 DONE pytest: tests/test_tokenizer.py
 
 == pytest: tests/test_train_bpe.py ==
@@ -154,5 +153,5 @@ tests/test_train_bpe.py::test_train_bpe_speed PASSED
 tests/test_train_bpe.py::test_train_bpe PASSED
 tests/test_train_bpe.py::test_train_bpe_special_tokens PASSED
 
-============================== 3 passed in 1.50s ===============================
+============================== 3 passed in 1.52s ===============================
 DONE pytest: tests/test_train_bpe.py

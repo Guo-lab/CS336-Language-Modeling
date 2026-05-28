@@ -229,15 +229,15 @@ class MultiHeadSelfAttention(nn.Module):
         self,
         d_model: int,
         num_heads: int,
+        rope_theta: float | None = None,
+        max_seq_len: int | None = None,
         device: torch.device | None = None,
         dtype: torch.dtype | None = None,
     ) -> None:
         """
         Causal multi-head self-attention. MultiHeadSelfAttention(x) = W_o MultiHead(W_q x, W_k x, W_v x)
         Each head applies scaled dot-product attention independently.
-        Apply RoPE to Q and K only, never V.
-
-        With cross-attention we have tokens from decoder to attend encoder input (K/V).
+        When RoPE is enabled, apply it to Q and K only, never V.
         """
         super().__init__()
         assert d_model % num_heads == 0
@@ -249,10 +249,23 @@ class MultiHeadSelfAttention(nn.Module):
         self.W_V = Linear(d_model, d_model, device=device, dtype=dtype)
         self.W_O = Linear(d_model, d_model, device=device, dtype=dtype)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        self.rope = None
+        if rope_theta is not None:
+            assert max_seq_len is not None, "max_seq_len is required when RoPE is enabled."
+            self.rope = RotaryPositionalEmbedding(
+                theta=rope_theta,
+                d_k=self.d_head,
+                max_seq_len=max_seq_len,
+                device=device,
+            )
+
+    def forward(
+        self, x: torch.Tensor, token_positions: torch.Tensor | None = None
+    ) -> torch.Tensor:
         """
         Shape:
             x: (..., seq_len, d_model)
+            token_positions: (..., seq_len), used only when RoPE is enabled
         """
         mask_shape = (x.shape[-2], x.shape[-2])  # (..., queries, keys)
         # True means query i may attend to key j.
@@ -269,6 +282,39 @@ class MultiHeadSelfAttention(nn.Module):
         K = rearrange(K, "... seq_len (h d_head) -> ... h seq_len d_head", h=self.num_heads)
         V = rearrange(V, "... seq_len (h d_head) -> ... h seq_len d_head", h=self.num_heads)
 
+        if self.rope is not None:
+            assert token_positions is not None, "token_positions is required for RoPE."
+            Q = self.rope(Q, token_positions)
+            K = self.rope(K, token_positions)
+
         multi_heads = scaled_dot_product_attention(Q, K, V, masks)
         multi_heads = rearrange(multi_heads, "... h seq_len d_head -> ... seq_len (h d_head)")
         return self.W_O(multi_heads)
+
+
+class TransformerBlock(nn.Module):
+    def __init__(
+        self,
+        d_model: int,
+        num_heads: int,
+        d_ff: int,
+        rope_theta: float,
+        max_seq_len: int,
+        device: torch.device | None = None,
+        dtype: torch.dtype | None = None,
+    ) -> None:
+        """
+        Pre-norm Transformer block.
+        Shape:
+            x: (..., seq_len, d_model)
+            return: (..., seq_len, d_model)
+        """
+        ...
+
+    def forward(
+        self, x: torch.Tensor, token_positions: torch.Tensor | None = None
+    ) -> torch.Tensor:
+        """
+        Apply the pre-norm Transformer block.
+        """
+        raise NotImplementedError
