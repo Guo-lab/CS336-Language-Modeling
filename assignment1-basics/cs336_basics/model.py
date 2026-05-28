@@ -3,8 +3,10 @@ from __future__ import annotations
 import math
 
 import torch
-from einops import einsum
+from einops import einsum, rearrange
 from torch import nn
+
+from .nn_utils import scaled_dot_product_attention
 
 
 class Linear(nn.Module):
@@ -220,3 +222,53 @@ class RotaryPositionalEmbedding(nn.Module):
         out[..., 0::2] = even_q * cos - odd_q * sin
         out[..., 1::2] = odd_q * cos + even_q * sin
         return out
+
+
+class MultiHeadSelfAttention(nn.Module):
+    def __init__(
+        self,
+        d_model: int,
+        num_heads: int,
+        device: torch.device | None = None,
+        dtype: torch.dtype | None = None,
+    ) -> None:
+        """
+        Causal multi-head self-attention. MultiHeadSelfAttention(x) = W_o MultiHead(W_q x, W_k x, W_v x)
+        Each head applies scaled dot-product attention independently.
+        Apply RoPE to Q and K only, never V.
+
+        With cross-attention we have tokens from decoder to attend encoder input (K/V).
+        """
+        super().__init__()
+        assert d_model % num_heads == 0
+        self.d_model, self.num_heads = d_model, num_heads
+        self.d_head = d_model // num_heads  # d_k = d_v = d_model / h
+
+        self.W_Q = Linear(d_model, d_model, device=device, dtype=dtype)
+        self.W_K = Linear(d_model, d_model, device=device, dtype=dtype)
+        self.W_V = Linear(d_model, d_model, device=device, dtype=dtype)
+        self.W_O = Linear(d_model, d_model, device=device, dtype=dtype)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Shape:
+            x: (..., seq_len, d_model)
+        """
+        mask_shape = (x.shape[-2], x.shape[-2])  # (..., queries, keys)
+        # True means query i may attend to key j.
+        # Causal mask allows each token to attend to itself and previous tokens:
+        # [[ True, False, False, ...],
+        #  [ True,  True, False, ...],
+        #  [ True,  True,  True, ...], ...]
+        i = rearrange(torch.arange(mask_shape[0], device=x.device), "query -> query 1")
+        j = rearrange(torch.arange(mask_shape[1], device=x.device), "key -> 1 key")
+        masks = i >= j
+
+        Q, K, V = self.W_Q(x), self.W_K(x), self.W_V(x)
+        Q = rearrange(Q, "... seq_len (h d_head) -> ... h seq_len d_head", h=self.num_heads)
+        K = rearrange(K, "... seq_len (h d_head) -> ... h seq_len d_head", h=self.num_heads)
+        V = rearrange(V, "... seq_len (h d_head) -> ... h seq_len d_head", h=self.num_heads)
+
+        multi_heads = scaled_dot_product_attention(Q, K, V, masks)
+        multi_heads = rearrange(multi_heads, "... h seq_len d_head -> ... seq_len (h d_head)")
+        return self.W_O(multi_heads)
