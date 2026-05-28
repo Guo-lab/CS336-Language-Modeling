@@ -19,6 +19,7 @@ from cs336_basics.model import (
     RotaryPositionalEmbedding,
     SwiGLU,
     TransformerBlock,
+    TransformerLM,
 )
 from cs336_basics.nn_utils import scaled_dot_product_attention, softmax
 from cs336_basics.tokenizer import Tokenizer
@@ -350,9 +351,8 @@ def run_transformer_block(
             "ln2.weight": weights["ln2.weight"],
         }
     )
-    token_positions = torch.arange(in_features.shape[-2], device=in_features.device)
-    token_positions = rearrange(token_positions, "seq -> 1 seq")
-    return block(in_features, token_positions)
+    pos = torch.arange(in_features.shape[-2], device=in_features.device)[None, :]
+    return block(in_features, pos)
 
 
 def run_transformer_lm(
@@ -434,7 +434,39 @@ def run_transformer_lm(
         Float[Tensor, "batch_size sequence_length vocab_size"]: Tensor with the predicted unnormalized
         next-word distribution for each token.
     """
-    raise NotImplementedError
+    model = TransformerLM(
+        vocab_size=vocab_size,
+        context_length=context_length,
+        d_model=d_model,
+        num_layers=num_layers,
+        num_heads=num_heads,
+        d_ff=d_ff,
+        rope_theta=rope_theta,
+        device=in_indices.device,
+    )
+    state_dict = {
+        "token_embeddings.weight": weights["token_embeddings.weight"],
+        "final_ln.weight": weights["ln_final.weight"],
+        "linear_head.weight": weights["lm_head.weight"],
+    }
+    for layer_idx in range(num_layers):
+        ref = f"layers.{layer_idx}"
+        ours = f"transformer_blks.{layer_idx}"
+        state_dict.update(
+            {
+                f"{ours}.attn.W_Q.weight": weights[f"{ref}.attn.q_proj.weight"],
+                f"{ours}.attn.W_K.weight": weights[f"{ref}.attn.k_proj.weight"],
+                f"{ours}.attn.W_V.weight": weights[f"{ref}.attn.v_proj.weight"],
+                f"{ours}.attn.W_O.weight": weights[f"{ref}.attn.output_proj.weight"],
+                f"{ours}.ln1.weight": weights[f"{ref}.ln1.weight"],
+                f"{ours}.ffn.W1.weight": weights[f"{ref}.ffn.w1.weight"],
+                f"{ours}.ffn.W2.weight": weights[f"{ref}.ffn.w2.weight"],
+                f"{ours}.ffn.W3.weight": weights[f"{ref}.ffn.w3.weight"],
+                f"{ours}.ln2.weight": weights[f"{ref}.ln2.weight"],
+            }
+        )
+    model.load_state_dict(state_dict)
+    return model(in_indices)
 
 
 def run_rmsnorm(

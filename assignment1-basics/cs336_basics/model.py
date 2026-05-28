@@ -6,7 +6,7 @@ import torch
 from einops import einsum, rearrange
 from torch import nn
 
-from .nn_utils import scaled_dot_product_attention
+from .nn_utils import scaled_dot_product_attention, softmax
 
 
 class Linear(nn.Module):
@@ -309,12 +309,94 @@ class TransformerBlock(nn.Module):
             x: (..., seq_len, d_model)
             return: (..., seq_len, d_model)
         """
-        ...
+        super().__init__()
+        self.attn = MultiHeadSelfAttention(
+            d_model=d_model,
+            num_heads=num_heads,
+            rope_theta=rope_theta,
+            max_seq_len=max_seq_len,
+            device=device,
+            dtype=dtype,
+        )
+        self.ln1 = RMSNorm(d_model, 1e-5, device, dtype)
+        self.ffn = SwiGLU(d_model, d_ff, device, dtype)
+        self.ln2 = RMSNorm(d_model, 1e-5, device, dtype)
 
     def forward(
         self, x: torch.Tensor, token_positions: torch.Tensor | None = None
     ) -> torch.Tensor:
         """
         Apply the pre-norm Transformer block.
+            x' = x + Causal MHA(RMSNorm(x))
+            out = x' + Position-wiseFFN(RMSNorm(x'))
         """
-        raise NotImplementedError
+        x_hidden = self.attn(self.ln1(x), token_positions) + x
+        x_out = self.ffn(self.ln2(x_hidden)) + x_hidden
+        return x_out
+
+
+class TransformerLM(nn.Module):
+    def __init__(
+        self,
+        vocab_size: int,
+        context_length: int,
+        num_layers: int,
+        d_model: int,
+        num_heads: int,
+        d_ff: int,
+        rope_theta: float,
+        device: torch.device | None = None,
+        dtype: torch.dtype | None = None,
+    ) -> None:
+        """
+        Construct a Transformer language model.
+        """
+        super().__init__()
+
+        self.token_embeddings = Embedding(
+            num_embeddings=vocab_size,
+            embedding_dim=d_model,
+            device=device,
+            dtype=dtype,
+        )
+
+        self.transformer_blks = nn.ModuleList()
+        for _ in range(num_layers):
+            self.transformer_blks.append(
+                TransformerBlock(
+                    d_model=d_model,
+                    num_heads=num_heads,
+                    d_ff=d_ff,
+                    rope_theta=rope_theta,
+                    max_seq_len=context_length,
+                    device=device,
+                    dtype=dtype,
+                )
+            )
+
+        self.final_ln = RMSNorm(d_model, 1e-5, device, dtype)
+        self.linear_head = Linear(
+            in_features=d_model,
+            out_features=vocab_size,
+            device=device,
+            dtype=dtype,
+        )
+
+    def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
+        """
+        Run the Transformer LM and return logits.
+
+        Shape:
+            token_ids: (..., seq_len)
+            return: (..., seq_len, vocab_size)
+        """
+        x = self.token_embeddings(token_ids)  # (batch_size, sequence_length, embedding_dim)
+
+        token_positions = torch.arange(x.shape[-2], device=x.device)[None, :]
+        x_hidden = x
+        for each_layer in self.transformer_blks:
+            x_hidden = each_layer(x_hidden, token_positions)
+
+        x_norm = self.final_ln(x_hidden)  # (batch_size, sequence_length, embedding_dim)
+        vocab_logits = self.linear_head(x_norm)  # (batch_size, sequence_length, vocab_size)
+        return vocab_logits
