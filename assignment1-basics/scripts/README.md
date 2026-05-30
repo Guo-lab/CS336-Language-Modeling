@@ -39,3 +39,17 @@ Print Transformer LM parameter and FLOPs accounting tables in the terminal.
 ```bash
 .venv/bin/python scripts/transformer_accounting.py
 ```
+
+## `sgd_lr_tuning.py`
+
+Run the toy SGD learning-rate tuning experiment from Section 4.2.1.
+
+```bash
+.venv/bin/python scripts/sgd_lr_tuning.py
+```
+
+Change the tested learning rates or number of steps:
+
+```bash
+.venv/bin/python scripts/sgd_lr_tuning.py --lrs 10 100 1000 --steps 10
+```

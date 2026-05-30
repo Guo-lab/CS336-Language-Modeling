@@ -65,3 +65,39 @@ def scaled_dot_product_attention(
 
     attention = einsum(attn_weights, V, "... queries keys, ... keys d_v -> ... queries d_v")
     return attention
+
+
+def cross_entropy(logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    """
+    Compute average cross-entropy loss from logits and target class IDs.
+    模型每个位置都预测 “下一个 token”，cross entropy 惩罚模型给真正下一个 token 的概率不够高
+
+    p(x_{i+1} | x_1:i) = softmax(o_i)["<target i-th token>"]
+                       = exp(o_i[x_{i+1}]) / sum_a exp(o_i[a])
+    Formula:
+        loss_i = -log softmax(logits_i)[target_i]
+        where logits at the i-th position area vector of unnormalized scores over the vocabulary,
+        shape (vocab_size,).
+
+    -log p(x_{i+1} | x_1:i) = -log(exp(o_i[x_{i+1}])) + log(sum_a exp(o_i[a]))
+                            = -o_i[target_i] + logsumexp(o_i)
+
+    Shape:
+        logits: (..., vocab_size)
+        targets: (...), target_i is the next token ID x_{i+1}
+        return: scalar average loss
+    """
+    assert logits.shape[:-1] == targets.shape, "logits and targets must share batch-like dims"
+    vocab_size = logits.shape[-1]
+    flat_logits = logits.reshape(-1, vocab_size)  # (..., vocab_size) -> (N, vocab_size)
+    flat_targets = targets.reshape(-1)  # (...) -> (N,)
+    target_token_score = flat_logits[torch.arange(flat_logits.size(0)), flat_targets]
+
+    max_logits = torch.max(flat_logits, dim=-1).values  # (N,)
+    shifted_logits = flat_logits - max_logits.unsqueeze(-1)
+    # (N, vocab_size) -> (N,)
+    vocab_tokens_score = torch.log(torch.sum(torch.exp(shifted_logits), dim=-1))
+    vocab_tokens_score = vocab_tokens_score + max_logits
+
+    cross_entropy_loss = -target_token_score + vocab_tokens_score
+    return cross_entropy_loss.mean()
