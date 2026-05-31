@@ -1,0 +1,54 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260531/sanity_decode.log
+Running sanity checks
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== sanity: sanity_check/test_generation.py ==
+Generation sanity check
+TinyStepModel returns very high logits for scripted next-token IDs.
+This checks decoding mechanics, not text quality.
+
+Note: CHECK_LOG=1 disables ANSI colors in saved logs.
+
+Case 1: PASS top-p keeps at least the highest-probability token
+  logits:         [[0.10000000149011612, 8.0, 0.20000000298023224, 2.0]]
+  top_p:          0.01
+  expected shape: (1, 1)
+  actual shape:   (1, 1)
+  expected token: [[1]]
+  actual token:   [[1]]
+
+Case 2: PASS plain multinomial sampling supports batched logits
+  logits:         [[0.10000000149011612, 3.0, 0.20000000298023224, 2.0], [4.0, 0.10000000149011612, 0.20000000298023224, 0.30000001192092896]]
+  logits shape:   (2, 4)
+  expected shape: (2, 1)
+  actual shape:   (2, 1)
+  sampled tokens: [[1], [0]]
+
+Case 3: PASS decode appends tokens until eos
+  prompt:         [[0, 4, 4]]
+  scripted next:  [1, 2]
+  fake logits:    selected token gets 20.0, all others get -20.0
+  expected:       [[0, 4, 4, 1, 2]]
+  actual:         [[0, 4, 4, 1, 2]]
+
+Case 4: PASS decode respects max_new_tokens when eos is absent
+  prompt:         [[0, 4]]
+  scripted next:  [1, 3, 4]
+  fake logits:    selected token gets 20.0, all others get -20.0
+  expected:       [[0, 4, 1, 3, 4]]
+  actual:         [[0, 4, 1, 3, 4]]
+
+Case 5: PASS max_new_tokens=0 returns the prompt without model calls
+  prompt:         [[0, 4]]
+  fake logits:    not produced because model should not be called
+  expected:       [[0, 4]]
+  actual:         [[0, 4]]
+  model calls:    0
+
+Case 6: PASS context_length crops model input while keeping full output history
+  fake logits:            selected token gets 20.0, all others get -20.0
+  prompt length:          5
+  context_length:         3
+  expected max input len: 3
+  actual input lengths:   [3, 3]
+DONE sanity: sanity_check/test_generation.py

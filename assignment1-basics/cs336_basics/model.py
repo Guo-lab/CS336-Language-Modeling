@@ -6,7 +6,7 @@ import torch
 from einops import einsum, rearrange
 from torch import nn
 
-from .nn_utils import scaled_dot_product_attention, softmax
+from .nn_utils import scaled_dot_product_attention
 
 
 class Linear(nn.Module):
