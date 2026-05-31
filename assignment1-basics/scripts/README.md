@@ -32,6 +32,35 @@ Run tokenizer compression and throughput experiments. By default this samples Ti
 .venv/bin/python scripts/tokenizer_experiments.py --out-dir artifacts/tokenizer_experiments/evaluation/tokenizer_experiments
 ```
 
+## `tokenize_dataset.py`
+
+Convert raw text into a tokenized 1D `.npy` array for LM training. The output
+can be loaded by `np.load(..., mmap_mode="r")`.
+
+TinyStories examples:
+
+```bash
+.venv/bin/python scripts/tokenize_dataset.py \
+  --input data/TinyStoriesV2-GPT4-train.txt \
+  --tokenizer artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k \
+  --output artifacts/lm_data/tinystories_train_10k.npy \
+  --dtype uint16
+```
+
+```bash
+.venv/bin/python scripts/tokenize_dataset.py \
+  --input data/TinyStoriesV2-GPT4-valid.txt \
+  --tokenizer artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k \
+  --output artifacts/lm_data/tinystories_valid_10k.npy \
+  --dtype uint16
+```
+
+Inspect tokenized LM data and decode previews:
+
+```bash
+.venv/bin/python sanity_check/test_lm_data.py
+```
+
 ## `transformer_accounting.py`
 
 Print Transformer LM parameter and FLOPs accounting tables in the terminal.
@@ -69,10 +98,12 @@ configuration and leaves the training loop unimplemented.
 
 ```bash
 .venv/bin/python scripts/train_lm.py \
-  --train-data data/train.npy \
-  --valid-data data/valid.npy \
+  --train-data artifacts/lm_data/tinystories_train_10k.npy \
+  --valid-data artifacts/lm_data/tinystories_valid_10k.npy \
   --vocab-size 10000 \
-  --run-name smoke
+  --run-name tinystories_smoke \
+  --context-length 32 \
+  --batch-size 4
 ```
 
 ## Experiment Logs

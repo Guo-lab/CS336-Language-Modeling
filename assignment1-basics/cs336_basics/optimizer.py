@@ -94,12 +94,14 @@ def clip_gradients(
     """
     Clip gradients in-place so their global L2 norm is at most max_l2_norm.
     """
+    params_with_grad = []
     global_norm_sq = 0.0
     for p in parameters:
         if p.grad is not None:
+            params_with_grad.append(p)
             global_norm_sq += p.grad.data.norm(2).item() ** 2
     global_norm = math.sqrt(global_norm_sq)
+
     if global_norm > max_l2_norm:
-        for p in parameters:
-            if p.grad is not None:
-                p.grad.data *= max_l2_norm / (global_norm + eps)
+        for p in params_with_grad:
+            p.grad.data *= max_l2_norm / (global_norm + eps)

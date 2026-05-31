@@ -135,6 +135,8 @@ venv.bak/
 
 # Local datasets
 data/
+artifacts/lm_data/*.npy
+artifacts/**/*.pt
 
 # Spyder project settings
 .spyderproject

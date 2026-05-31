@@ -1,0 +1,9 @@
+{
+  "dtype": "uint16",
+  "elapsed_seconds": 163.52428845799295,
+  "input": "data/TinyStoriesV2-GPT4-train.txt",
+  "output": "artifacts/lm_data/tinystories_train_10k.npy",
+  "tokenizer": "artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k",
+  "tokens": 540796778,
+  "tokens_per_second": 3307134.2679404044
+}

@@ -91,7 +91,8 @@ def cross_entropy(logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     vocab_size = logits.shape[-1]
     flat_logits = logits.reshape(-1, vocab_size)  # (..., vocab_size) -> (N, vocab_size)
     flat_targets = targets.reshape(-1)  # (...) -> (N,)
-    target_token_score = flat_logits[torch.arange(flat_logits.size(0)), flat_targets]
+    rows = torch.arange(flat_logits.size(0), device=flat_logits.device)
+    target_token_score = flat_logits[rows, flat_targets]
 
     max_logits = torch.max(flat_logits, dim=-1).values  # (N,)
     shifted_logits = flat_logits - max_logits.unsqueeze(-1)

@@ -23,7 +23,8 @@ def get_batch(
 
     # Each row starts at one sampled index and spans context_length consecutive tokens.
     x_idx = sample_start_idx[:, None] + offsets[None, :]  # (batch_size, context_length)
-    x = torch.from_numpy(dataset[x_idx]).to(device)
+    # Token arrays may be stored compactly, but embedding lookup expects integer indices.
+    x = torch.from_numpy(dataset[x_idx]).long().to(device)
     y_idx = sample_start_idx[:, None] + offsets[None, :] + 1
-    y = torch.from_numpy(dataset[y_idx]).to(device)
+    y = torch.from_numpy(dataset[y_idx]).long().to(device)
     return x, y

@@ -328,7 +328,7 @@ class TransformerBlock(nn.Module):
         """
         Apply the pre-norm Transformer block.
             x' = x + Causal MHA(RMSNorm(x))
-            out = x' + Position-wiseFFN(RMSNorm(x'))
+            out = x' + Position-wise FFN(RMSNorm(x'))
         """
         x_hidden = self.attn(self.ln1(x), token_positions) + x
         x_out = self.ffn(self.ln2(x_hidden)) + x_hidden
