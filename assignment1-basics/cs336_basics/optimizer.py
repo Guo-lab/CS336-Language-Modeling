@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable
 
 import torch
+import math
 
 
 class AdamW(torch.optim.Optimizer):
@@ -36,5 +37,54 @@ class AdamW(torch.optim.Optimizer):
 
     def step(self, closure: Callable | None = None):
         loss = None if closure is None else closure()
-        raise NotImplementedError
+
+        for group in self.param_groups:
+            lr, weight_decay = group["lr"], group["weight_decay"]
+            beta1, beta2 = group["betas"]
+            eps = group["eps"]
+
+            for p in group["params"]:
+                if p.grad is None:
+                    continue
+
+                state = self.state[p]
+                # Lazy init avoids allocating state for frozen parameters or
+                # other parameters without gradients.
+                if len(state) == 0:
+                    state["t"] = 1
+                    state["m"] = torch.zeros_like(p)
+                    state["v"] = torch.zeros_like(p)
+
+                t = state["t"]
+                adaptive_lr = lr * (math.sqrt(1 - beta2**t) / (1 - beta1**t))
+                p.data -= lr * weight_decay * p.data  # shrinks toward 0
+                state["m"] = beta1 * state["m"] + (1 - beta1) * p.grad.data
+                state["v"] = beta2 * state["v"] + (1 - beta2) * p.grad.data**2
+                p.data -= adaptive_lr * state["m"] / (torch.sqrt(state["v"]) + eps)
+                state["t"] = t + 1
+
         return loss
+
+
+def get_lr_cosine_schedule(
+    it: int,
+    max_learning_rate: float,
+    min_learning_rate: float,
+    warmup_iters: int,
+    cosine_cycle_iters: int,
+) -> float:
+    """
+    Cosine learning-rate schedule with linear warmup.
+    """
+    raise NotImplementedError
+
+
+def clip_gradients(
+    parameters: Iterable[torch.nn.Parameter],
+    max_l2_norm: float,
+    eps: float = 1e-6,
+) -> None:
+    """
+    Clip gradients in-place so their global L2 norm is at most max_l2_norm.
+    """
+    raise NotImplementedError

@@ -108,6 +108,31 @@ def print_table(title: str, rows: list[tuple[str, str, str]]) -> None:
         print(f"  {name:<{name_width}}  {C.GREEN}{value:>{value_width}}{C.RESET}  {C.DIM}{extra}{C.RESET}")
 
 
+def formula(label: str, expr: str, note: str = "") -> None:
+    suffix = f"  {C.DIM}# {note}{C.RESET}" if note else ""
+    print(f"    {label:<28} {C.YELLOW}{expr}{C.RESET}{suffix}")
+
+
+def print_formula_map() -> None:
+    print(f"\n{C.BOLD}{C.CYAN}Formula map{C.RESET}")
+    print(f"  {C.DIM}Symbols: L=num_layers, T=context_length, D=d_model, F=d_ff, V=vocab_size, H=num_heads{C.RESET}")
+    print(f"  {C.BOLD}Parameters{C.RESET}")
+    formula("token embeddings:", "V * D")
+    formula("per-layer attention:", "4 * D * D", "W_Q, W_K, W_V, W_O")
+    formula("per-layer SwiGLU FFN:", "3 * D * F", "W1, W3, W2")
+    formula("per-layer RMSNorms:", "2 * D", "ln1, ln2")
+    formula("transformer layers:", "L * (4D^2 + 3DF + 2D)")
+    formula("final RMSNorm:", "D")
+    formula("LM head:", "V * D")
+    print(f"  {C.BOLD}Forward FLOPs{C.RESET}")
+    formula("QKV projections:", "L * 3 * 2TDD")
+    formula("attention scores QK^T:", "L * 2TTD", "all heads combined")
+    formula("attention weighted values:", "L * 2TTD", "all heads combined")
+    formula("attention output proj:", "L * 2TDD")
+    formula("SwiGLU W1/W3/W2:", "L * 3 * 2TDF")
+    formula("LM head logits:", "2TDV")
+
+
 def print_config(config: Config) -> None:
     param_parts = params(config)
     flop_parts = flops(config)
@@ -158,6 +183,7 @@ def main() -> None:
 
     print(f"{C.BOLD}Transformer LM resource accounting{C.RESET}")
     print(f"{C.DIM}Generated with Codex (GPT-5). Matrix multiply rule: 2*m*n*p FLOPs.{C.RESET}")
+    print_formula_map()
     for config in configs:
         print_config(config)
     print(

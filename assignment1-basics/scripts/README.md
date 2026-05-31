@@ -53,3 +53,11 @@ Change the tested learning rates or number of steps:
 ```bash
 .venv/bin/python scripts/sgd_lr_tuning.py --lrs 10 100 1000 --steps 10
 ```
+
+## `adamw_accounting.py`
+
+Print AdamW training memory/FLOPs accounting for the GPT-2 XL-shaped model.
+
+```bash
+.venv/bin/python scripts/adamw_accounting.py
+```
