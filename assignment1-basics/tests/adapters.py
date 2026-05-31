@@ -11,6 +11,7 @@ from torch import Tensor
 
 
 from cs336_basics.bpe import BPETrainer
+from cs336_basics.data import get_batch
 from cs336_basics.model import (
     Embedding,
     Linear,
@@ -529,7 +530,12 @@ def run_get_batch(
         is the sampled input sequences, and the second tuple item is the corresponding
         language modeling labels.
     """
-    raise NotImplementedError
+    return get_batch(
+        dataset=dataset,
+        batch_size=batch_size,
+        context_length=context_length,
+        device=device,
+    )
 
 
 def run_softmax(in_features: Float[Tensor, " ..."], dim: int) -> Float[Tensor, " ..."]:

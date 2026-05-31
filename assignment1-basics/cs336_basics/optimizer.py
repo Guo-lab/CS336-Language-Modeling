@@ -76,7 +76,14 @@ def get_lr_cosine_schedule(
     """
     Cosine learning-rate schedule with linear warmup.
     """
-    raise NotImplementedError
+    if it < warmup_iters:
+        return max_learning_rate * it / warmup_iters
+    elif it <= cosine_cycle_iters:
+        progress = (it - warmup_iters) / (cosine_cycle_iters - warmup_iters)
+        cosine_weight = (1 + math.cos(math.pi * progress)) / 2
+        return min_learning_rate + (max_learning_rate - min_learning_rate) * cosine_weight
+    else:
+        return min_learning_rate
 
 
 def clip_gradients(
@@ -87,4 +94,12 @@ def clip_gradients(
     """
     Clip gradients in-place so their global L2 norm is at most max_l2_norm.
     """
-    raise NotImplementedError
+    global_norm_sq = 0.0
+    for p in parameters:
+        if p.grad is not None:
+            global_norm_sq += p.grad.data.norm(2).item() ** 2
+    global_norm = math.sqrt(global_norm_sq)
+    if global_norm > max_l2_norm:
+        for p in parameters:
+            if p.grad is not None:
+                p.grad.data *= max_l2_norm / (global_norm + eps)
