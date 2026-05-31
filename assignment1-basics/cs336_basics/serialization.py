@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import IO, BinaryIO
 
 import torch
@@ -44,3 +45,19 @@ def load_checkpoint(
     model.load_state_dict(obj["model"])
     optimizer.load_state_dict(obj["optimizer"])
     return obj["iteration"]
+
+
+def to_jsonable(value):
+    """Convert common config/metric values into JSON-serializable objects."""
+    if isinstance(value, dict):
+        return {str(k): to_jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [to_jsonable(item) for item in value]
+    if isinstance(value, Path):
+        return str(value)
+    if hasattr(value, "item"):
+        try:
+            return value.item()
+        except ValueError:
+            pass
+    return value
