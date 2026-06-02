@@ -1,0 +1,68 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/grid_search_lr_sweep/tinystories_lr_2em4_mps_20260601
+[32mConfig written to:[39m artifacts/lm_experiments/grid_search_lr_sweep/tinystories_lr_2em4_mps_20260601/config.json
+[32mtrain data:[39m tokens=540,796,778, dtype=uint16, shape=(540796778,)
+[32mvalid data:[39m tokens=5,461,210, dtype=uint16, shape=(5461210,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+[33mbatch smoke:[39m x.shape=(32, 256), y.shape=(32, 256), device=mps:0
+[32mmodel:[39m parameters=22,696,448, device=mps
+[33mforward smoke:[39m logits.shape=(32, 256, 10000), expected=(32, 256, 10000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 5000
+[32mstep      1:[39m train_loss=9.2411, lr=0
+[32mstep    100:[39m train_loss=7.3401, lr=3.96e-05
+[32mstep    200:[39m train_loss=4.9717, lr=7.96e-05
+[32mstep    300:[39m train_loss=3.8666, lr=0.0001196
+[32mstep    400:[39m train_loss=3.3643, lr=0.0001596
+[32mstep    500:[39m train_loss=3.2107, lr=0.0001996
+[32mstep    600:[39m train_loss=2.9755, lr=0.000199785
+[32mstep    700:[39m train_loss=3.0549, lr=0.000199133
+[32mstep    800:[39m train_loss=2.7797, lr=0.000198046
+[32mstep    900:[39m train_loss=2.6610, lr=0.000196531
+[32mstep   1000:[39m train_loss=2.6088, lr=0.000194594
+[33meval   1000:[39m valid_loss=2.6834
+[32mstep   1100:[39m train_loss=2.8831, lr=0.000192245
+[32mstep   1200:[39m train_loss=2.6112, lr=0.000189495
+[32mstep   1300:[39m train_loss=2.5457, lr=0.000186358
+[32mstep   1400:[39m train_loss=2.5227, lr=0.000182848
+[32mstep   1500:[39m train_loss=2.4686, lr=0.000178984
+[32mstep   1600:[39m train_loss=2.4786, lr=0.000174784
+[32mstep   1700:[39m train_loss=2.4248, lr=0.000170268
+[32mstep   1800:[39m train_loss=2.3170, lr=0.000165459
+[32mstep   1900:[39m train_loss=2.3739, lr=0.000160379
+[32mstep   2000:[39m train_loss=2.2803, lr=0.000155054
+[33meval   2000:[39m valid_loss=2.2955
+[32mstep   2100:[39m train_loss=2.2763, lr=0.00014951
+[32mstep   2200:[39m train_loss=2.2360, lr=0.000143773
+[32mstep   2300:[39m train_loss=2.2312, lr=0.000137871
+[32mstep   2400:[39m train_loss=2.1296, lr=0.000131834
+[32mstep   2500:[39m train_loss=2.1699, lr=0.00012569
+[32mstep   2600:[39m train_loss=2.2109, lr=0.00011947
+[32mstep   2700:[39m train_loss=2.1556, lr=0.000113204
+[32mstep   2800:[39m train_loss=2.2478, lr=0.000106922
+[32mstep   2900:[39m train_loss=2.1449, lr=0.000100655
+[32mstep   3000:[39m train_loss=1.9624, lr=9.44335e-05
+[33meval   3000:[39m valid_loss=2.1326
+[32mstep   3100:[39m train_loss=2.1705, lr=8.8288e-05
+[32mstep   3200:[39m train_loss=2.0678, lr=8.22482e-05
+[32mstep   3300:[39m train_loss=1.9403, lr=7.63437e-05
+[32mstep   3400:[39m train_loss=2.0090, lr=7.06031e-05
+[32mstep   3500:[39m train_loss=2.1721, lr=6.50544e-05
+[32mstep   3600:[39m train_loss=2.0442, lr=5.97247e-05
+[32mstep   3700:[39m train_loss=2.0282, lr=5.464e-05
+[32mstep   3800:[39m train_loss=2.0408, lr=4.9825e-05
+[32mstep   3900:[39m train_loss=2.1111, lr=4.53031e-05
+[32mstep   4000:[39m train_loss=1.9914, lr=4.10964e-05
+[33meval   4000:[39m valid_loss=2.0493
+[32mstep   4100:[39m train_loss=1.8677, lr=3.72254e-05
+[32mstep   4200:[39m train_loss=1.9889, lr=3.3709e-05
+[32mstep   4300:[39m train_loss=2.0119, lr=3.05642e-05
+[32mstep   4400:[39m train_loss=1.8757, lr=2.78065e-05
+[32mstep   4500:[39m train_loss=2.0276, lr=2.54492e-05
+[32mstep   4600:[39m train_loss=1.9231, lr=2.35038e-05
+[32mstep   4700:[39m train_loss=1.9999, lr=2.19798e-05
+[32mstep   4800:[39m train_loss=2.0698, lr=2.08846e-05
+[32mstep   4900:[39m train_loss=2.1530, lr=2.02236e-05
+[32mstep   5000:[39m train_loss=2.0492, lr=2e-05
+[33meval   5000:[39m valid_loss=2.0131
+checkpoint saved: artifacts/lm_experiments/grid_search_lr_sweep/tinystories_lr_2em4_mps_20260601/checkpoints/step_00005000.pt

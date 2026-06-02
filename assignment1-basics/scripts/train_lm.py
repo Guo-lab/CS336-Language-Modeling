@@ -7,21 +7,14 @@ from typing import Any
 import numpy as np
 import torch
 
+from cs336_basics import console
 from cs336_basics.data import get_batch
 from cs336_basics.experiment import ExperimentLogger
 from cs336_basics.model import TransformerLM
-from cs336_basics.nn_utils import cross_entropy
-from cs336_basics.optimizer import AdamW, clip_gradients, get_lr_cosine_schedule
-from cs336_basics.serialization import load_checkpoint, save_checkpoint
-
-
-class TerminalStyle:
-    RESET = "\033[0m"
-    BOLD = "\033[1m"
-    DIM = "\033[2m"
-    CYAN = "\033[36m"
-    GREEN = "\033[32m"
-    YELLOW = "\033[33m"
+from cs336_basics.optimizer import AdamW
+from cs336_basics.serialization import load_checkpoint
+from cs336_basics.tokenizer import Tokenizer
+from cs336_basics.training import Trainer
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -62,6 +55,14 @@ def build_parser() -> argparse.ArgumentParser:
     logging.add_argument("--eval-every", type=int, default=100)
     logging.add_argument("--eval-iters", type=int, default=20)
     logging.add_argument("--sample-every", type=int, default=500)
+    logging.add_argument("--tokenizer", type=Path, default=None)
+    logging.add_argument("--sample-prompt", default=None)
+    logging.add_argument("--sample-max-new-tokens", type=int, default=64)
+    logging.add_argument("--sample-temperature", type=float, default=1.0)
+    logging.add_argument("--sample-top-p", type=float, default=0.9)
+    logging.add_argument("--wandb-project", default=None)
+    logging.add_argument("--wandb-entity", default=None)
+    logging.add_argument("--wandb-mode", choices=["online", "offline", "disabled"], default=None)
 
     checkpoint = parser.add_argument_group("checkpoint")
     checkpoint.add_argument("--save-every", type=int, default=1_000)
@@ -106,6 +107,14 @@ def args_to_config(args: argparse.Namespace) -> dict[str, Any]:
             "eval_every": args.eval_every,
             "eval_iters": args.eval_iters,
             "sample_every": args.sample_every,
+            "tokenizer": args.tokenizer,
+            "sample_prompt": args.sample_prompt,
+            "sample_max_new_tokens": args.sample_max_new_tokens,
+            "sample_temperature": args.sample_temperature,
+            "sample_top_p": args.sample_top_p,
+            "wandb_project": args.wandb_project,
+            "wandb_entity": args.wandb_entity,
+            "wandb_mode": args.wandb_mode,
         },
         "checkpoint": {
             "save_every": args.save_every,
@@ -128,68 +137,14 @@ def load_token_dataset(name: str, path: Path, context_length: int) -> np.ndarray
     return dataset
 
 
-def print_dataset_summary(name: str, dataset: np.ndarray) -> None:
-    print(
-        f"{TerminalStyle.GREEN}{name}:{TerminalStyle.RESET} "
-        f"tokens={len(dataset):,}, dtype={dataset.dtype}, shape={dataset.shape}"
+def load_tokenizer(tokenizer_dir: Path | None) -> Tokenizer | None:
+    if tokenizer_dir is None:
+        return None
+    return Tokenizer.from_files(
+        str(tokenizer_dir / "vocab.json"),
+        str(tokenizer_dir / "merges.json"),
+        special_tokens=["<|endoftext|>"],
     )
-
-
-def count_parameters(model: torch.nn.Module) -> int:
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-
-def build_model(args: argparse.Namespace) -> TransformerLM:
-    return TransformerLM(
-        vocab_size=args.vocab_size,
-        context_length=args.context_length,
-        num_layers=args.num_layers,
-        d_model=args.d_model,
-        num_heads=args.num_heads,
-        d_ff=args.d_ff,
-        rope_theta=args.rope_theta,
-        device=torch.device(args.device),
-    )
-
-
-def build_optimizer(args: argparse.Namespace, model: torch.nn.Module) -> AdamW:
-    return AdamW(
-        model.parameters(),
-        lr=args.max_lr,
-        betas=(args.beta1, args.beta2),
-        eps=args.eps,
-        weight_decay=args.weight_decay,
-    )
-
-
-def set_learning_rate(optimizer: torch.optim.Optimizer, lr: float) -> None:
-    for group in optimizer.param_groups:
-        group["lr"] = lr
-
-
-@torch.no_grad()
-def estimate_loss(
-    model: torch.nn.Module,
-    dataset: np.ndarray,
-    args: argparse.Namespace,
-) -> float:
-    was_training = model.training
-    model.eval()
-
-    losses = []
-    for _ in range(args.eval_iters):
-        x, y = get_batch(
-            dataset=dataset,
-            batch_size=args.batch_size,
-            context_length=args.context_length,
-            device=args.device,
-        )
-        logits = model(x)
-        losses.append(cross_entropy(logits, y).item())
-
-    if was_training:
-        model.train()
-    return sum(losses) / len(losses)
 
 
 def main() -> None:
@@ -201,18 +156,30 @@ def main() -> None:
         out_dir=args.out_dir,
         config=config,
         resume=args.resume_from is not None,
+        wandb_project=args.wandb_project,
+        wandb_entity=args.wandb_entity,
+        wandb_mode=args.wandb_mode,
     )
 
-    print(
-        f"{TerminalStyle.BOLD}{TerminalStyle.CYAN}Transformer LM training{TerminalStyle.RESET}"
-    )
-    print(f"{TerminalStyle.GREEN}Run directory:{TerminalStyle.RESET} {logger.run_dir}")
-    print(f"{TerminalStyle.GREEN}Config written to:{TerminalStyle.RESET} {logger.config_path}")
+    console.header("Transformer LM training")
+    console.info("Run directory", logger.run_dir)
+    console.info("Config written to", logger.config_path)
 
     train_tokens = load_token_dataset("train", args.train_data, args.context_length)
     valid_tokens = load_token_dataset("valid", args.valid_data, args.context_length)
-    print_dataset_summary("train data", train_tokens)
-    print_dataset_summary("valid data", valid_tokens)
+    tokenizer = load_tokenizer(args.tokenizer)
+    train_summary = (
+        f"tokens={len(train_tokens):,}, dtype={train_tokens.dtype}, shape={train_tokens.shape}"
+    )
+    valid_summary = (
+        f"tokens={len(valid_tokens):,}, dtype={valid_tokens.dtype}, shape={valid_tokens.shape}"
+    )
+    console.info("train data", train_summary)
+    console.info("valid data", valid_summary)
+    if args.sample_prompt is not None and tokenizer is None:
+        raise ValueError("--sample-prompt requires --tokenizer")
+    if tokenizer is not None:
+        console.info("tokenizer", args.tokenizer)
 
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -223,90 +190,59 @@ def main() -> None:
         context_length=args.context_length,
         device=args.device,
     )
-    print(
-        f"{TerminalStyle.YELLOW}batch smoke:{TerminalStyle.RESET} "
-        f"x.shape={tuple(x.shape)}, y.shape={tuple(y.shape)}, device={x.device}"
+    console.warn(
+        "batch smoke",
+        f"x.shape={tuple(x.shape)}, y.shape={tuple(y.shape)}, device={x.device}",
     )
 
-    model = build_model(args)
-    optimizer = build_optimizer(args, model)
+    model = TransformerLM(
+        vocab_size=args.vocab_size,
+        context_length=args.context_length,
+        num_layers=args.num_layers,
+        d_model=args.d_model,
+        num_heads=args.num_heads,
+        d_ff=args.d_ff,
+        rope_theta=args.rope_theta,
+        device=torch.device(args.device),
+    )
+    optimizer = AdamW(
+        model.parameters(),
+        lr=args.max_lr,
+        betas=(args.beta1, args.beta2),
+        eps=args.eps,
+        weight_decay=args.weight_decay,
+    )
     start_iter = 0
 
     if args.resume_from is not None:
         start_iter = load_checkpoint(args.resume_from, model, optimizer)
-        print(
-            f"{TerminalStyle.YELLOW}resumed:{TerminalStyle.RESET} "
-            f"{args.resume_from} at iteration {start_iter}"
-        )
+        console.warn("resumed", f"{args.resume_from} at iteration {start_iter}")
 
     model.train()
-    num_parameters = count_parameters(model)
-    print(
-        f"{TerminalStyle.GREEN}model:{TerminalStyle.RESET} "
-        f"parameters={num_parameters:,}, device={args.device}"
-    )
+    num_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    console.info("model", f"parameters={num_parameters:,}, device={args.device}")
 
     with torch.no_grad():
         logits = model(x)
-    print(
-        f"{TerminalStyle.YELLOW}forward smoke:{TerminalStyle.RESET} "
-        f"logits.shape={tuple(logits.shape)}, expected={(args.batch_size, args.context_length, args.vocab_size)}"
+    console.warn(
+        "forward smoke",
+        f"logits.shape={tuple(logits.shape)}, expected={(args.batch_size, args.context_length, args.vocab_size)}",
     )
 
-    print(
-        f"{TerminalStyle.BOLD}{TerminalStyle.CYAN}Starting training loop{TerminalStyle.RESET} "
-        f"{TerminalStyle.DIM}from iteration {start_iter} to {args.max_iters}{TerminalStyle.RESET}"
+    trainer = Trainer(
+        model=model,
+        optimizer=optimizer,
+        train_tokens=train_tokens,
+        valid_tokens=valid_tokens,
+        logger=logger,
+        args=args,
+        tokenizer=tokenizer,
+        start_iter=start_iter,
     )
-
-    for step in range(start_iter, args.max_iters):
-        lr = get_lr_cosine_schedule(
-            it=step,
-            max_learning_rate=args.max_lr,
-            min_learning_rate=args.min_lr,
-            warmup_iters=args.warmup_iters,
-            cosine_cycle_iters=args.cosine_cycle_iters,
-        )
-        set_learning_rate(optimizer, lr)
-
-        x, y = get_batch(
-            dataset=train_tokens,
-            batch_size=args.batch_size,
-            context_length=args.context_length,
-            device=args.device,
-        )
-        logits = model(x)
-        loss = cross_entropy(logits, y)
-
-        optimizer.zero_grad()
-        loss.backward()
-        if args.grad_clip > 0:
-            clip_gradients(model.parameters(), args.grad_clip)
-        optimizer.step()
-
-        iteration = step + 1
-        if iteration % args.log_every == 0 or iteration == 1:
-            train_loss = loss.item()
-            logger.log_metrics(iteration, {"train_loss": train_loss, "lr": lr})
-            print(
-                f"{TerminalStyle.GREEN}step {iteration:>6}:{TerminalStyle.RESET} "
-                f"train_loss={train_loss:.4f}, lr={lr:.6g}"
-            )
-
-        if iteration % args.eval_every == 0 or iteration == args.max_iters:
-            valid_loss = estimate_loss(model, valid_tokens, args)
-            logger.log_metrics(iteration, {"valid_loss": valid_loss})
-            print(
-                f"{TerminalStyle.YELLOW}eval {iteration:>6}:{TerminalStyle.RESET} "
-                f"valid_loss={valid_loss:.4f}"
-            )
-
-        if iteration % args.save_every == 0 or iteration == args.max_iters:
-            checkpoint_path = logger.checkpoint_path(iteration)
-            save_checkpoint(model, optimizer, iteration, checkpoint_path)
-            print(
-                f"{TerminalStyle.DIM}checkpoint saved: {checkpoint_path}"
-                f"{TerminalStyle.RESET}"
-            )
+    try:
+        trainer.run()
+    finally:
+        logger.close()
 
 
 if __name__ == "__main__":

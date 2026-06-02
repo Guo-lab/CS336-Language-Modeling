@@ -1,0 +1,155 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.12.13
+    cli_version: 0.25.1
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1780362498
+    t:
+      1:
+      - 1
+      2:
+      - 1
+      3:
+      - 2
+      - 4
+      - 13
+      - 16
+      - 42
+      - 61
+      4: 3.12.13
+      5: 0.25.1
+      13: darwin-arm64
+    e:
+      qq1uyf5tt5bhe1f4dxte66u2l4bsihuh:
+        os: macOS-26.5-arm64-arm-64bit
+        python: CPython 3.12.13
+        started_at: '2026-06-02T01:08:18.636235Z'
+        args:
+        - --train-data
+        - artifacts/lm_data/tinystories_train_10k.npy
+        - --valid-data
+        - artifacts/lm_data/tinystories_valid_10k.npy
+        - --tokenizer
+        - artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+        - --run-name
+        - tinystories_bs16_mps_20260601
+        - --out-dir
+        - artifacts/lm_experiments/grid_search_batch_size
+        - --device
+        - mps
+        - --vocab-size
+        - '10000'
+        - --context-length
+        - '256'
+        - --batch-size
+        - '16'
+        - --num-layers
+        - '4'
+        - --d-model
+        - '512'
+        - --num-heads
+        - '16'
+        - --d-ff
+        - '1344'
+        - --max-iters
+        - '10000'
+        - --warmup-iters
+        - '1000'
+        - --cosine-cycle-iters
+        - '10000'
+        - --max-lr
+        - 2e-3
+        - --min-lr
+        - 2e-4
+        - --log-every
+        - '100'
+        - --eval-every
+        - '1000'
+        - --eval-iters
+        - '20'
+        - --save-every
+        - '1000000'
+        - --sample-every
+        - '0'
+        - --wandb-project
+        - cs336-a1
+        - --wandb-mode
+        - offline
+        program: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/scripts/train_lm.py
+        code_path: assignment1-basics/scripts/train_lm.py
+        code_path_local: scripts/train_lm.py
+        git:
+          remote_url: https://github.com/Guo-lab/CS336-Language-Modeling.git
+          commit: 086ca5c26be3fc171b623e994cb4362657a1747f
+        root: artifacts/lm_experiments/grid_search_batch_size/tinystories_bs16_mps_20260601
+        host: Guos-MacBook-Pro-2.local
+        executable: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+        cpu_count: 10
+        cpu_count_logical: 10
+        disk:
+          /:
+            total: '494332366848'
+            used: '453746864128'
+        memory:
+          total: '17179869184'
+        apple: {}
+        writer_id: qq1uyf5tt5bhe1f4dxte66u2l4bsihuh
+data:
+  desc: null
+  value:
+    train_data: artifacts/lm_data/tinystories_train_10k.npy
+    valid_data: artifacts/lm_data/tinystories_valid_10k.npy
+    device: mps
+    seed: 0
+model:
+  desc: null
+  value:
+    vocab_size: 10000
+    context_length: 256
+    num_layers: 4
+    d_model: 512
+    num_heads: 16
+    d_ff: 1344
+    rope_theta: 10000.0
+optimizer:
+  desc: null
+  value:
+    batch_size: 16
+    max_iters: 10000
+    max_lr: 0.002
+    min_lr: 0.0002
+    warmup_iters: 1000
+    cosine_cycle_iters: 10000
+    weight_decay: 0.1
+    betas:
+    - 0.9
+    - 0.95
+    eps: 1.0e-08
+    grad_clip: 1.0
+logging:
+  desc: null
+  value:
+    run_name: tinystories_bs16_mps_20260601
+    out_dir: artifacts/lm_experiments/grid_search_batch_size
+    log_every: 100
+    eval_every: 1000
+    eval_iters: 20
+    sample_every: 0
+    tokenizer: artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+    sample_prompt: null
+    sample_max_new_tokens: 64
+    sample_temperature: 1.0
+    sample_top_p: 0.9
+    wandb_project: cs336-a1
+    wandb_entity: null
+    wandb_mode: offline
+checkpoint:
+  desc: null
+  value:
+    save_every: 1000000
+    resume_from: null

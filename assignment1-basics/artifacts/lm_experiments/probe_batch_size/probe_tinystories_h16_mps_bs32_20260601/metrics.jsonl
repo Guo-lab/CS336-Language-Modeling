@@ -1,0 +1,3 @@
+{"lr": 0.0, "step": 1, "train_loss": 9.241101264953613, "wall_clock_seconds": 2.3467910289764404}
+{"lr": 0.00021367302228901278, "step": 20, "train_loss": 4.554555416107178, "wall_clock_seconds": 20.333181142807007}
+{"step": 20, "valid_loss": 4.664726257324219, "wall_clock_seconds": 20.64414405822754}

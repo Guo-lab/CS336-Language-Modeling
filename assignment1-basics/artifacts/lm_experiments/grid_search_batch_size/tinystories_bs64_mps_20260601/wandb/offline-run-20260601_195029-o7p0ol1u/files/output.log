@@ -1,0 +1,41 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/grid_search_batch_size/tinystories_bs64_mps_20260601
+[32mConfig written to:[39m artifacts/lm_experiments/grid_search_batch_size/tinystories_bs64_mps_20260601/config.json
+[32mtrain data:[39m tokens=540,796,778, dtype=uint16, shape=(540796778,)
+[32mvalid data:[39m tokens=5,461,210, dtype=uint16, shape=(5461210,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+[33mbatch smoke:[39m x.shape=(64, 256), y.shape=(64, 256), device=mps:0
+[32mmodel:[39m parameters=22,696,448, device=mps
+[33mforward smoke:[39m logits.shape=(64, 256, 10000), expected=(64, 256, 10000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 2500
+[32mstep      1:[39m train_loss=9.2385, lr=0
+[32mstep    100:[39m train_loss=3.5049, lr=0.000792
+[32mstep    200:[39m train_loss=2.7737, lr=0.001592
+[32mstep    300:[39m train_loss=2.4377, lr=0.00199789
+[32mstep    400:[39m train_loss=2.3221, lr=0.00198059
+[32mstep    500:[39m train_loss=2.1706, lr=0.00194615
+[32mstep    600:[39m train_loss=2.1325, lr=0.00189524
+[32mstep    700:[39m train_loss=2.1037, lr=0.00182885
+[32mstep    800:[39m train_loss=1.9477, lr=0.00174828
+[32mstep    900:[39m train_loss=2.0050, lr=0.00165509
+[32mstep   1000:[39m train_loss=1.9526, lr=0.00155109
+[33meval   1000:[39m valid_loss=1.9487
+[32mstep   1100:[39m train_loss=1.8630, lr=0.00143831
+[32mstep   1200:[39m train_loss=1.8286, lr=0.00131895
+[32mstep   1300:[39m train_loss=1.8349, lr=0.00119533
+[32mstep   1400:[39m train_loss=1.9392, lr=0.00106985
+[32mstep   1500:[39m train_loss=1.6935, lr=0.000944954
+[32mstep   1600:[39m train_loss=1.8042, lr=0.00082308
+[32mstep   1700:[39m train_loss=1.7027, lr=0.000706596
+[32mstep   1800:[39m train_loss=1.6919, lr=0.000597769
+[32mstep   1900:[39m train_loss=1.7896, lr=0.000498717
+[32mstep   2000:[39m train_loss=1.6708, lr=0.000411368
+[33meval   2000:[39m valid_loss=1.7008
+[32mstep   2100:[39m train_loss=1.7202, lr=0.000337423
+[32mstep   2200:[39m train_loss=1.7417, lr=0.000278321
+[32mstep   2300:[39m train_loss=1.6720, lr=0.000235212
+[32mstep   2400:[39m train_loss=1.6354, lr=0.000208934
+[32mstep   2500:[39m train_loss=1.7302, lr=0.000200001
+[33meval   2500:[39m valid_loss=1.6491
+checkpoint saved: artifacts/lm_experiments/grid_search_batch_size/tinystories_bs64_mps_20260601/checkpoints/step_00002500.pt
