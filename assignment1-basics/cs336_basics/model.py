@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import math
 
 import torch
@@ -7,6 +8,21 @@ from einops import einsum, rearrange
 from torch import nn
 
 from .nn_utils import scaled_dot_product_attention
+
+
+@dataclass(frozen=True)
+class AblationConfig:
+    norm_mode: str = "pre"
+    position_encoding: str = "rope"
+    ffn_type: str = "swiglu"
+
+    def __post_init__(self) -> None:
+        if self.norm_mode not in {"pre", "post", "none"}:
+            raise ValueError(f"Invalid norm_mode: {self.norm_mode}")
+        if self.position_encoding not in {"rope", "none"}:
+            raise ValueError(f"Invalid position_encoding: {self.position_encoding}")
+        if self.ffn_type not in {"swiglu", "silu"}:
+            raise ValueError(f"Invalid ffn_type: {self.ffn_type}")
 
 
 class Linear(nn.Module):
@@ -145,7 +161,28 @@ class SwiGLU(nn.Module):
         return self.W2(SiLU * self.W3(x))
 
 
-PositionwiseFeedForward = SwiGLU
+class SiLU(nn.Module):
+    def __init__(
+        self,
+        d_model: int,
+        d_ff: int,
+        device: torch.device | None = None,
+        dtype: torch.dtype | None = None,
+    ) -> None:
+        super().__init__()
+        assert d_ff % 64 == 0, "dim of the inner feed-forward layer must be a multiple of 64"
+        self.W1 = Linear(d_model, d_ff, device=device, dtype=dtype)
+        self.W2 = Linear(d_ff, d_model, device=device, dtype=dtype)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        hidden = self.W1(x)
+        return self.W2(hidden * torch.sigmoid(hidden))
+
+
+POSITIONWISE_FEED_FORWARDS = {
+    "swiglu": SwiGLU,
+    "silu": SiLU,
+}
 
 
 class RotaryPositionalEmbedding(nn.Module):
@@ -300,6 +337,7 @@ class TransformerBlock(nn.Module):
         d_ff: int,
         rope_theta: float,
         max_seq_len: int,
+        ablation_config: AblationConfig | None = None,
         device: torch.device | None = None,
         dtype: torch.dtype | None = None,
     ) -> None:
@@ -310,17 +348,29 @@ class TransformerBlock(nn.Module):
             return: (..., seq_len, d_model)
         """
         super().__init__()
+        ablation_config = ablation_config or AblationConfig()
+        self.norm_mode = ablation_config.norm_mode
         self.attn = MultiHeadSelfAttention(
             d_model=d_model,
             num_heads=num_heads,
-            rope_theta=rope_theta,
+            rope_theta=rope_theta if ablation_config.position_encoding == "rope" else None,
             max_seq_len=max_seq_len,
             device=device,
             dtype=dtype,
         )
-        self.ln1 = RMSNorm(d_model, 1e-5, device, dtype)
-        self.ffn = SwiGLU(d_model, d_ff, device, dtype)
-        self.ln2 = RMSNorm(d_model, 1e-5, device, dtype)
+        self.ffn = POSITIONWISE_FEED_FORWARDS[ablation_config.ffn_type](
+            d_model, d_ff, device, dtype
+        )
+        self.ln1 = (
+            nn.Identity()
+            if self.norm_mode == "none"
+            else RMSNorm(d_model, 1e-5, device, dtype)
+        )
+        self.ln2 = (
+            nn.Identity()
+            if self.norm_mode == "none"
+            else RMSNorm(d_model, 1e-5, device, dtype)
+        )
 
     def forward(
         self, x: torch.Tensor, token_positions: torch.Tensor | None = None
@@ -330,6 +380,10 @@ class TransformerBlock(nn.Module):
             x' = x + Causal MHA(RMSNorm(x))
             out = x' + Position-wise FFN(RMSNorm(x'))
         """
+        if self.norm_mode == "post":
+            x_hidden = self.ln1(self.attn(x, token_positions) + x)
+            return self.ln2(self.ffn(x_hidden) + x_hidden)
+
         x_hidden = self.attn(self.ln1(x), token_positions) + x
         x_out = self.ffn(self.ln2(x_hidden)) + x_hidden
         return x_out
@@ -345,6 +399,7 @@ class TransformerLM(nn.Module):
         num_heads: int,
         d_ff: int,
         rope_theta: float,
+        ablation_config: AblationConfig | None = None,
         device: torch.device | None = None,
         dtype: torch.dtype | None = None,
     ) -> None:
@@ -352,6 +407,7 @@ class TransformerLM(nn.Module):
         Construct a Transformer language model.
         """
         super().__init__()
+        ablation_config = ablation_config or AblationConfig()
 
         self.token_embeddings = Embedding(
             num_embeddings=vocab_size,
@@ -369,12 +425,17 @@ class TransformerLM(nn.Module):
                     d_ff=d_ff,
                     rope_theta=rope_theta,
                     max_seq_len=context_length,
+                    ablation_config=ablation_config,
                     device=device,
                     dtype=dtype,
                 )
             )
 
-        self.final_ln = RMSNorm(d_model, 1e-5, device, dtype)
+        self.final_ln = (
+            nn.Identity()
+            if ablation_config.norm_mode == "none"
+            else RMSNorm(d_model, 1e-5, device, dtype)
+        )
         self.linear_head = Linear(
             in_features=d_model,
             out_features=vocab_size,

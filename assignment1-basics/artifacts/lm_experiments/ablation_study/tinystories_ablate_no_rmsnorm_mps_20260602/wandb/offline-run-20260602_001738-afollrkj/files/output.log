@@ -1,0 +1,69 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/ablation_study/tinystories_ablate_no_rmsnorm_mps_20260602
+[32mConfig written to:[39m artifacts/lm_experiments/ablation_study/tinystories_ablate_no_rmsnorm_mps_20260602/config.json
+[32mtrain data:[39m tokens=540,796,778, dtype=uint16, shape=(540796778,)
+[32mvalid data:[39m tokens=5,461,210, dtype=uint16, shape=(5461210,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+[33mbatch smoke:[39m x.shape=(32, 256), y.shape=(32, 256), device=mps:0
+[32mmodel:[39m parameters=22,691,840, device=mps
+[32marchitecture:[39m norm_mode=none, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(32, 256, 10000), expected=(32, 256, 10000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 5000
+[32mstep      1:[39m train_loss=19.0185, lr=0
+[32mstep    100:[39m train_loss=4.2445, lr=0.000396
+[32mstep    200:[39m train_loss=3.3619, lr=0.000796
+[32mstep    300:[39m train_loss=2.9435, lr=0.001196
+[32mstep    400:[39m train_loss=2.7437, lr=0.001596
+[32mstep    500:[39m train_loss=2.8944, lr=0.001996
+[32mstep    600:[39m train_loss=352.9982, lr=0.00199785
+[32mstep    700:[39m train_loss=2.9400, lr=0.00199133
+[32mstep    800:[39m train_loss=2.7485, lr=0.00198046
+[32mstep    900:[39m train_loss=3.2844, lr=0.00196531
+[32mstep   1000:[39m train_loss=2.6117, lr=0.00194594
+[33meval   1000:[39m valid_loss=88.5846
+[32mstep   1100:[39m train_loss=2.8747, lr=0.00192245
+[32mstep   1200:[39m train_loss=2.5959, lr=0.00189495
+[32mstep   1300:[39m train_loss=2.5497, lr=0.00186358
+[32mstep   1400:[39m train_loss=2.4785, lr=0.00182848
+[32mstep   1500:[39m train_loss=2.4503, lr=0.00178984
+[32mstep   1600:[39m train_loss=2.4038, lr=0.00174784
+[32mstep   1700:[39m train_loss=2.4212, lr=0.00170268
+[32mstep   1800:[39m train_loss=127.6348, lr=0.00165459
+[32mstep   1900:[39m train_loss=2.3822, lr=0.00160379
+[32mstep   2000:[39m train_loss=2.2733, lr=0.00155054
+[33meval   2000:[39m valid_loss=2.4861
+[32mstep   2100:[39m train_loss=2.2281, lr=0.0014951
+[32mstep   2200:[39m train_loss=2.2145, lr=0.00143773
+[32mstep   2300:[39m train_loss=2.1466, lr=0.00137871
+[32mstep   2400:[39m train_loss=2.0749, lr=0.00131834
+[32mstep   2500:[39m train_loss=2.0777, lr=0.0012569
+[32mstep   2600:[39m train_loss=2.0914, lr=0.0011947
+[32mstep   2700:[39m train_loss=2.0479, lr=0.00113204
+[32mstep   2800:[39m train_loss=2.1596, lr=0.00106922
+[32mstep   2900:[39m train_loss=2.0262, lr=0.00100655
+[32mstep   3000:[39m train_loss=1.8239, lr=0.000944335
+[33meval   3000:[39m valid_loss=1.9940
+[32mstep   3100:[39m train_loss=2.0248, lr=0.00088288
+[32mstep   3200:[39m train_loss=1.8965, lr=0.000822482
+[32mstep   3300:[39m train_loss=1.7791, lr=0.000763437
+[32mstep   3400:[39m train_loss=1.8132, lr=0.000706031
+[32mstep   3500:[39m train_loss=1.9653, lr=0.000650544
+[32mstep   3600:[39m train_loss=1.8303, lr=0.000597247
+[32mstep   3700:[39m train_loss=1.8297, lr=0.0005464
+[32mstep   3800:[39m train_loss=1.8337, lr=0.00049825
+[32mstep   3900:[39m train_loss=1.8742, lr=0.000453031
+[32mstep   4000:[39m train_loss=1.7525, lr=0.000410964
+[33meval   4000:[39m valid_loss=1.8107
+[32mstep   4100:[39m train_loss=1.6284, lr=0.000372254
+[32mstep   4200:[39m train_loss=1.7362, lr=0.00033709
+[32mstep   4300:[39m train_loss=1.7618, lr=0.000305642
+[32mstep   4400:[39m train_loss=1.6192, lr=0.000278065
+[32mstep   4500:[39m train_loss=1.7411, lr=0.000254492
+[32mstep   4600:[39m train_loss=1.6507, lr=0.000235038
+[32mstep   4700:[39m train_loss=1.7480, lr=0.000219798
+[32mstep   4800:[39m train_loss=1.7869, lr=0.000208846
+[32mstep   4900:[39m train_loss=1.8918, lr=0.000202236
+[32mstep   5000:[39m train_loss=1.7610, lr=0.0002
+[33meval   5000:[39m valid_loss=1.7252
+checkpoint saved: artifacts/lm_experiments/ablation_study/tinystories_ablate_no_rmsnorm_mps_20260602/checkpoints/step_00005000.pt

@@ -10,7 +10,7 @@ import torch
 from cs336_basics import console
 from cs336_basics.data import get_batch
 from cs336_basics.experiment import ExperimentLogger
-from cs336_basics.model import TransformerLM
+from cs336_basics.model import AblationConfig, TransformerLM
 from cs336_basics.optimizer import AdamW
 from cs336_basics.serialization import load_checkpoint
 from cs336_basics.tokenizer import Tokenizer
@@ -34,6 +34,9 @@ def build_parser() -> argparse.ArgumentParser:
     model.add_argument("--num-heads", type=int, default=8)
     model.add_argument("--d-ff", type=int, default=1344)
     model.add_argument("--rope-theta", type=float, default=10_000.0)
+    model.add_argument("--norm-mode", choices=["pre", "post", "none"], default="pre")
+    model.add_argument("--position-encoding", choices=["rope", "none"], default="rope")
+    model.add_argument("--ffn-type", choices=["swiglu", "silu"], default="swiglu")
 
     optimizer = parser.add_argument_group("optimizer")
     optimizer.add_argument("--batch-size", type=int, default=32)
@@ -87,6 +90,9 @@ def args_to_config(args: argparse.Namespace) -> dict[str, Any]:
             "num_heads": args.num_heads,
             "d_ff": args.d_ff,
             "rope_theta": args.rope_theta,
+            "norm_mode": args.norm_mode,
+            "position_encoding": args.position_encoding,
+            "ffn_type": args.ffn_type,
         },
         "optimizer": {
             "batch_size": args.batch_size,
@@ -203,6 +209,11 @@ def main() -> None:
         num_heads=args.num_heads,
         d_ff=args.d_ff,
         rope_theta=args.rope_theta,
+        ablation_config=AblationConfig(
+            norm_mode=args.norm_mode,
+            position_encoding=args.position_encoding,
+            ffn_type=args.ffn_type,
+        ),
         device=torch.device(args.device),
     )
     optimizer = AdamW(
@@ -221,6 +232,10 @@ def main() -> None:
     model.train()
     num_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
     console.info("model", f"parameters={num_parameters:,}, device={args.device}")
+    console.info(
+        "architecture",
+        f"norm_mode={args.norm_mode}, position_encoding={args.position_encoding}, ffn_type={args.ffn_type}",
+    )
 
     with torch.no_grad():
         logits = model(x)

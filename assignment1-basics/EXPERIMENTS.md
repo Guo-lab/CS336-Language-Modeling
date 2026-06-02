@@ -93,3 +93,29 @@ max_lr=2e-3, min_lr=2e-4, final valid_loss=1.6384
 ```
 
 This is the default LR schedule for the following TinyStories batch-size sweep.
+
+## TinyStories Ablation Study
+
+Use the selected TinyStories training setup for the main ablation comparison:
+
+```text
+batch_size=32, max_lr=2e-3, min_lr=2e-4, context_length=256, max_iters=5000
+```
+
+Baseline for comparison:
+
+```text
+artifacts/lm_experiments/grid_search_batch_size/tinystories_bs32_mps_20260601
+```
+
+Ablation runs are written under:
+
+```text
+artifacts/lm_experiments/ablation_study/
+```
+
+Run command:
+
+```bash
+DEVICE=mps scripts/run_tinystories_ablation_study.sh
+```

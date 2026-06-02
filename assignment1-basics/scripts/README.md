@@ -184,6 +184,15 @@ rate schedule uses the TinyStories LR sweep winner, `MAX_LR=2e-3` and
 DEVICE=mps BATCH_SIZES="16 32 64" scripts/run_tinystories_batch_sweep.sh
 ```
 
+Run TinyStories architecture ablations. This keeps the selected TinyStories
+training setup fixed (`batch_size=32`, `MAX_LR=2e-3`, `MIN_LR=2e-4`) and runs
+no-RMSNorm, post-norm, NoPE, and SiLU-FFN variants under
+`artifacts/lm_experiments/ablation_study/`:
+
+```bash
+DEVICE=mps scripts/run_tinystories_ablation_study.sh
+```
+
 ## Experiment Logs
 
 Training scripts use `cs336_basics.experiment.ExperimentLogger` to create local
