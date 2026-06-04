@@ -1,0 +1,129 @@
+# Experiment Runs on M5 MacBook Air
+
+Run commands from `assignment1-basics/`.
+
+This file records concrete training/evaluation runs. Keep script usage details in
+`scripts/README.md`; keep experiment configs, observations, and follow-up ideas here.
+
+## Environment Checks
+
+MPS check on 2026-05-31:
+
+Stable wheels tested in this environment:
+
+```text
+torch 2.9.0   mps built True   mps available False
+torch 2.10.0  mps built True   mps available False
+torch 2.11.0  mps built True   mps available False
+torch 2.12.0  mps built True   mps available False
+```
+
+This appears to match the macOS 26 / PyTorch MPS availability issue rather than
+a project-code issue.
+
+Nightly install command:
+
+```bash
+.venv/bin/python -m pip install --pre --upgrade torch --extra-index-url https://download.pytorch.org/whl/nightly/cpu
+```
+
+User terminal check after installing nightly:
+
+```text
+torch 2.13.0.dev20260531
+mps built True
+mps available True
+tensor([2., 2.], device='mps:0')
+```
+
+W&B is optional. Add `--wandb-project cs336-a1` to upload metrics/samples, or
+`--wandb-project cs336-a1 --wandb-mode disabled` to sanity-check the code path
+without uploading.
+
+## TinyStories Smoke
+
+Goal: verify the real TinyStories token stream trains end-to-end, with train/valid
+loss and text samples logged. This is now closer to the PDF low-resource setting:
+`batch_size * max_iters * context_length = 32 * 5000 * 256 = 40.96M` training
+tokens.
+
+```bash
+.venv/bin/python scripts/train_lm.py \
+  --train-data artifacts/lm_data/tinystories_train_10k.npy --valid-data artifacts/lm_data/tinystories_valid_10k.npy --tokenizer artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k \
+  --run-name tinystories_smoke_mps --device mps --vocab-size 10000 \
+  --context-length 256 --batch-size 32 --num-layers 4 --d-model 512 --num-heads 8 --d-ff 1344 \
+  --max-iters 5000 --warmup-iters 500 --cosine-cycle-iters 5000 --max-lr 3e-4 --min-lr 3e-5 \
+  --log-every 50 --eval-every 500 --eval-iters 20 --save-every 1000 \
+  --sample-every 500 --sample-prompt "Once upon a time" --sample-max-new-tokens 80 --sample-temperature 0.8 --sample-top-p 0.9
+```
+
+### CPU and MPS
+
+```bash
+.venv/bin/python scripts/train_lm.py \
+  --train-data artifacts/lm_data/tinystories_train_10k.npy --valid-data artifacts/lm_data/tinystories_valid_10k.npy --tokenizer artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k \
+  --run-name tinystories_baseline_h16_mps --device mps --vocab-size 10000 \
+  --context-length 256 --batch-size 32 --num-layers 4 --d-model 512 --num-heads 16 --d-ff 1344 \
+  --max-iters 5000 --warmup-iters 500 --cosine-cycle-iters 5000 --max-lr 3e-4 --min-lr 3e-5 \
+  --log-every 100 --eval-every 1000 --eval-iters 20 --save-every 2500 \
+  --sample-every 2500 --sample-prompt "Once upon a time" --sample-max-new-tokens 80 --sample-temperature 0.8 --sample-top-p 0.9 \
+  --wandb-project cs336-a1 --wandb-mode offline
+```
+
+```bash
+.venv/bin/python scripts/train_lm.py \
+  --train-data artifacts/lm_data/tinystories_train_10k.npy --valid-data artifacts/lm_data/tinystories_valid_10k.npy --tokenizer artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k \
+  --run-name tinystories_baseline_h16_cpu --device cpu --vocab-size 10000 \
+  --context-length 256 --batch-size 32 --num-layers 4 --d-model 512 --num-heads 16 --d-ff 1344 \
+  --max-iters 5000 --warmup-iters 500 --cosine-cycle-iters 5000 --max-lr 3e-4 --min-lr 3e-5 \
+  --log-every 100 --eval-every 1000 --eval-iters 20 --save-every 2500 \
+  --sample-every 2500 --sample-prompt "Once upon a time" --sample-max-new-tokens 80 --sample-temperature 0.8 --sample-top-p 0.9 \
+  --wandb-project cs336-a1
+```
+
+## TinyStories LR Sweep
+
+For the learning-rate sweep, keep the cosine schedule family fixed with
+`min_lr = max_lr / 10` and `cosine_cycle_iters = max_iters`.
+
+Observed best run so far:
+
+```text
+max_lr=2e-3, min_lr=2e-4, final valid_loss=1.6384
+```
+
+This is the default LR schedule for the following TinyStories batch-size sweep.
+
+## TinyStories Ablation Study
+
+Use the selected TinyStories training setup for the main ablation comparison:
+
+```text
+batch_size=32, max_lr=2e-3, min_lr=2e-4, context_length=256, max_iters=5000
+```
+
+Baseline for comparison:
+
+```text
+artifacts/lm_experiments/grid_search_batch_size/tinystories_bs32_mps_20260601
+```
+
+Ablation runs are written under:
+
+```text
+artifacts/lm_experiments/ablation_study/
+```
+
+Run command:
+
+```bash
+DEVICE=mps scripts/run_tinystories_ablation_study.sh
+```
+
+
+
+
+Notes:
+Increasing depth from the successful 6-layer d_model=640 model toward deeper variants pushed the MPS setup close to the memory limit. In the 8-layer d_model=640 probe, the model had 80,620,160 parameters and passed the forward smoke test, but GPU usage became less stable and swap increased. 
+
+Compared with the 6-layer run, wall-clock speed slowed disproportionately, suggesting that the larger model crossed a practical memory/throughput threshold on the M5 MacBook Air. Therefore, the largest sustainable configuration for stable MPS utilization appears to be around the 6-layer d_model=640 setup, or possibly a 7-layer intermediate model.

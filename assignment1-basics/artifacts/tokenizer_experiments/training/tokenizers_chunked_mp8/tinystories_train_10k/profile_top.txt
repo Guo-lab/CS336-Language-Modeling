@@ -1,0 +1,48 @@
+         38112962 function calls (38112711 primitive calls) in 90.385 seconds
+
+   Ordered by: cumulative time
+   List reduced from 515 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       54    0.012    0.000  174.398    3.230 pool.py:500(_wait_for_updates)
+       70    0.002    0.000  110.722    1.582 connection.py:390(_recv)
+      240   34.494    0.144  110.712    0.461 {built-in method posix.read}
+     9743    0.677    0.000   95.905    0.010 bpe.py:90(best_pair)
+  2438034    4.479    0.000   95.024    0.000 {built-in method _heapq.heappop}
+       35    0.062    0.002   76.382    2.182 connection.py:246(recv)
+        1    0.000    0.000   76.243   76.243 bpe.py:181(build_pretoken_counts_from_file)
+        1    0.000    0.000   76.243   76.243 bpe.py:220(build_pretoken_counts_parallel)
+        1    0.000    0.000   76.240   76.240 pool.py:738(__exit__)
+        1    0.000    0.000   76.231   76.231 pool.py:654(terminate)
+       15    0.000    0.000   76.231    5.082 util.py:208(__call__)
+        1    0.000    0.000   76.231   76.231 pool.py:680(_terminate_pool)
+       35    0.000    0.000   76.221    2.178 connection.py:429(_recv_bytes)
+        1    0.000    0.000   76.219   76.219 pool.py:671(_help_stuff_finish)
+        1    0.000    0.000   76.219   76.219 {method 'acquire' of '_multiprocessing.SemLock' objects}
+      3/1    0.000    0.000   76.219   76.219 threading.py:1018(_bootstrap)
+      3/1    0.000    0.000   76.219   76.219 threading.py:1058(_bootstrap_inner)
+      3/1    0.000    0.000   76.219   76.219 threading.py:1001(run)
+        1    0.000    0.000   76.218   76.218 pool.py:573(_handle_results)
+      109    0.006    0.000   49.573    0.455 connection.py:1122(wait)
+       54    0.000    0.000   49.153    0.910 pool.py:333(_maintain_pool)
+    40/39   14.812    0.370   26.088    0.669 threading.py:323(wait)
+       54    0.000    0.000   17.552    0.325 queues.py:374(empty)
+      109    0.013    0.000   15.069    0.138 selectors.py:402(select)
+      109   14.987    0.137   15.007    0.138 {method 'poll' of 'select.poll' objects}
+        1    0.000    0.000   10.324   10.324 pool.py:527(_handle_tasks)
+9744/9743    0.287    0.000    7.520    0.001 bpe.py:338(merge_pair_in_state)
+   277780    2.514    0.000    4.682    0.000 bpe.py:110(remove)
+   337713    1.150    0.000    2.533    0.000 bpe.py:104(add)
+   615493    1.468    0.000    1.645    0.000 bpe.py:44(count_pairs_in_pretoken)
+  2767105    0.738    0.000    1.268    0.000 bpe.py:124(push_pair)
+  7905517    0.775    0.000    0.775    0.000 {method 'get' of 'dict' objects}
+        1    0.007    0.007    0.617    0.617 bpe.py:79(__init__)
+  1193373    0.234    0.000    0.519    0.000 bpe.py:53(add_pretoken_count)
+   277780    0.323    0.000    0.479    0.000 bpe.py:295(merge_pretoken)
+  2577363    0.375    0.000    0.450    0.000 bpe.py:40(__eq__)
+  2767105    0.340    0.000    0.341    0.000 {built-in method _heapq.heappush}
+       34    0.054    0.002    0.296    0.009 bpe.py:62(add_pretoken_counts)
+        1    0.002    0.002    0.250    0.250 bpe.py:159(train)
+       55    0.000    0.000    0.234    0.004 connection.py:253(poll)
+
+

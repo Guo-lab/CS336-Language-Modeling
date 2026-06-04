@@ -1,0 +1,11 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260527/pytest_transformer_block.log
+Running pytest files
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== pytest: tests/test_model.py ==
+pytest args: -q -k test_transformer_block --tb=short
+
+tests/test_model.py::test_transformer_block PASSED
+
+======================= 1 passed, 12 deselected in 0.05s =======================
+DONE pytest: tests/test_model.py

@@ -1,0 +1,25 @@
+{
+  "input": "data/owt_train.txt",
+  "vocab_size_requested": 32000,
+  "vocab_size_actual": 32000,
+  "num_merges": 31743,
+  "special_tokens": [
+    "<|endoftext|>"
+  ],
+  "elapsed_seconds": 4344.9714364579995,
+  "rss_start_bytes": 27099136,
+  "rss_end_bytes": 8059617280,
+  "max_rss_bytes": 9550479360,
+  "longest_token": {
+    "id": 25822,
+    "hex": "c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382c383c382",
+    "nbytes": 64,
+    "utf8_replace": "\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2\u00c3\u00c2"
+  },
+  "profile": {
+    "profile_stats": "artifacts/tokenizers_chunked_mp8/owt_train_32k/profile.stats",
+    "profile_top": "artifacts/tokenizers_chunked_mp8/owt_train_32k/profile_top.txt",
+    "sort": "cumulative",
+    "lines": 40
+  }
+}

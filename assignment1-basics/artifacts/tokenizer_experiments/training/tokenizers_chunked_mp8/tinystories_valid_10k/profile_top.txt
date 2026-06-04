@@ -1,0 +1,48 @@
+         11545032 function calls (11544927 primitive calls) in 5.389 seconds
+
+   Ordered by: cumulative time
+   List reduced from 498 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.008    0.008    5.389    5.389 bpe.py:159(train)
+        1    0.000    0.000    3.105    3.105 bpe.py:181(build_pretoken_counts_from_file)
+        1    0.000    0.000    3.105    3.105 bpe.py:220(build_pretoken_counts_parallel)
+        1    0.000    0.000    3.105    3.105 pool.py:738(__exit__)
+        1    0.000    0.000    3.103    3.103 pool.py:654(terminate)
+       15    0.000    0.000    3.092    0.206 util.py:208(__call__)
+        1    0.000    0.000    3.092    3.092 pool.py:680(_terminate_pool)
+        1    0.000    0.000    3.090    3.090 pool.py:671(_help_stuff_finish)
+        1    0.000    0.000    3.090    3.090 {method 'acquire' of '_multiprocessing.SemLock' objects}
+      3/1    0.000    0.000    3.090    3.090 threading.py:1018(_bootstrap)
+      3/1    0.000    0.000    3.090    3.090 threading.py:1058(_bootstrap_inner)
+      3/1    0.000    0.000    3.090    3.090 threading.py:1001(run)
+        1    0.000    0.000    3.090    3.090 pool.py:527(_handle_tasks)
+        9    0.000    0.000    3.089    0.343 connection.py:202(send)
+       14    0.000    0.000    3.089    0.221 connection.py:406(_send_bytes)
+       45    0.000    0.000    3.089    0.069 {built-in method posix.write}
+       14    0.000    0.000    3.089    0.221 connection.py:381(_send)
+        1    0.000    0.000    3.089    3.089 pool.py:573(_handle_results)
+        2    0.000    0.000    3.084    1.542 pool.py:500(_wait_for_updates)
+        7    0.000    0.000    3.084    0.441 connection.py:1122(wait)
+      8/4    0.000    0.000    3.084    0.771 connection.py:390(_recv)
+     11/7    3.083    0.280    3.084    0.441 {built-in method posix.read}
+     9743    0.128    0.000    1.130    0.000 bpe.py:90(best_pair)
+     9743    0.046    0.000    1.043    0.000 bpe.py:338(merge_pair_in_state)
+   531813    0.660    0.000    0.963    0.000 {built-in method _heapq.heappop}
+    81877    0.272    0.000    0.591    0.000 bpe.py:104(add)
+    68766    0.132    0.000    0.344    0.000 bpe.py:110(remove)
+  1752502    0.188    0.000    0.236    0.000 bpe.py:40(__eq__)
+   561859    0.136    0.000    0.222    0.000 bpe.py:124(push_pair)
+   150643    0.157    0.000    0.194    0.000 bpe.py:44(count_pairs_in_pretoken)
+  1573193    0.109    0.000    0.109    0.000 {method 'get' of 'dict' objects}
+    68766    0.071    0.000    0.105    0.000 bpe.py:295(merge_pretoken)
+        1    0.001    0.001    0.100    0.100 bpe.py:79(__init__)
+  1561349    0.068    0.000    0.068    0.000 bpe.py:37(__lt__)
+   561859    0.054    0.000    0.055    0.000 {built-in method _heapq.heappush}
+  1752646    0.048    0.000    0.048    0.000 {built-in method builtins.isinstance}
+   150643    0.020    0.000    0.035    0.000 bpe.py:53(add_pretoken_count)
+   287288    0.033    0.000    0.033    0.000 {method 'discard' of 'set' objects}
+   814822    0.031    0.000    0.031    0.000 {built-in method builtins.len}
+   295984    0.030    0.000    0.030    0.000 {method 'add' of 'set' objects}
+
+

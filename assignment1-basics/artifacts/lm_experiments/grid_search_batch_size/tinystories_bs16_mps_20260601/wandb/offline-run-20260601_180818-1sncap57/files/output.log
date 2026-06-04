@@ -1,0 +1,123 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/grid_search_batch_size/tinystories_bs16_mps_20260601
+[32mConfig written to:[39m artifacts/lm_experiments/grid_search_batch_size/tinystories_bs16_mps_20260601/config.json
+[32mtrain data:[39m tokens=540,796,778, dtype=uint16, shape=(540796778,)
+[32mvalid data:[39m tokens=5,461,210, dtype=uint16, shape=(5461210,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+[33mbatch smoke:[39m x.shape=(16, 256), y.shape=(16, 256), device=mps:0
+[32mmodel:[39m parameters=22,696,448, device=mps
+[33mforward smoke:[39m logits.shape=(16, 256, 10000), expected=(16, 256, 10000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 10000
+[32mstep      1:[39m train_loss=9.2275, lr=0
+[32mstep    100:[39m train_loss=4.9125, lr=0.000198
+[32mstep    200:[39m train_loss=3.6730, lr=0.000398
+[32mstep    300:[39m train_loss=3.1628, lr=0.000598
+[32mstep    400:[39m train_loss=3.0354, lr=0.000798
+[32mstep    500:[39m train_loss=2.8167, lr=0.000998
+[32mstep    600:[39m train_loss=2.6993, lr=0.001198
+[32mstep    700:[39m train_loss=2.7088, lr=0.001398
+[32mstep    800:[39m train_loss=2.7491, lr=0.001598
+[32mstep    900:[39m train_loss=2.7705, lr=0.001798
+[32mstep   1000:[39m train_loss=2.6531, lr=0.001998
+[33meval   1000:[39m valid_loss=2.6412
+[32mstep   1100:[39m train_loss=2.5549, lr=0.00199946
+[32mstep   1200:[39m train_loss=2.6329, lr=0.00199783
+[32mstep   1300:[39m train_loss=2.5101, lr=0.0019951
+[32mstep   1400:[39m train_loss=2.5512, lr=0.00199128
+[32mstep   1500:[39m train_loss=2.4117, lr=0.00198638
+[32mstep   1600:[39m train_loss=2.4325, lr=0.0019804
+[32mstep   1700:[39m train_loss=2.3602, lr=0.00197334
+[32mstep   1800:[39m train_loss=2.4742, lr=0.00196522
+[32mstep   1900:[39m train_loss=2.4497, lr=0.00195605
+[32mstep   2000:[39m train_loss=2.1632, lr=0.00194583
+[33meval   2000:[39m valid_loss=2.2622
+[32mstep   2100:[39m train_loss=2.1848, lr=0.00193458
+[32mstep   2200:[39m train_loss=2.4986, lr=0.00192232
+[32mstep   2300:[39m train_loss=2.2213, lr=0.00190905
+[32mstep   2400:[39m train_loss=2.3343, lr=0.0018948
+[32mstep   2500:[39m train_loss=2.2646, lr=0.00187958
+[32mstep   2600:[39m train_loss=2.2149, lr=0.00186341
+[32mstep   2700:[39m train_loss=2.2490, lr=0.00184631
+[32mstep   2800:[39m train_loss=1.9943, lr=0.0018283
+[32mstep   2900:[39m train_loss=2.1802, lr=0.0018094
+[32mstep   3000:[39m train_loss=2.2125, lr=0.00178964
+[33meval   3000:[39m valid_loss=2.1426
+[32mstep   3100:[39m train_loss=2.2170, lr=0.00176904
+[32mstep   3200:[39m train_loss=2.0913, lr=0.00174762
+[32mstep   3300:[39m train_loss=2.0832, lr=0.00172542
+[32mstep   3400:[39m train_loss=1.9359, lr=0.00170245
+[32mstep   3500:[39m train_loss=2.0166, lr=0.00167875
+[32mstep   3600:[39m train_loss=1.9667, lr=0.00165434
+[32mstep   3700:[39m train_loss=2.1443, lr=0.00162926
+[32mstep   3800:[39m train_loss=2.0911, lr=0.00160353
+[32mstep   3900:[39m train_loss=2.0024, lr=0.00157719
+[32mstep   4000:[39m train_loss=1.9753, lr=0.00155027
+[33meval   4000:[39m valid_loss=2.0040
+[32mstep   4100:[39m train_loss=1.9692, lr=0.0015228
+[32mstep   4200:[39m train_loss=2.0278, lr=0.00149482
+[32mstep   4300:[39m train_loss=1.9287, lr=0.00146635
+[32mstep   4400:[39m train_loss=1.9140, lr=0.00143744
+[32mstep   4500:[39m train_loss=1.9298, lr=0.00140811
+[32mstep   4600:[39m train_loss=1.9294, lr=0.00137841
+[32mstep   4700:[39m train_loss=2.1324, lr=0.00134838
+[32mstep   4800:[39m train_loss=1.9194, lr=0.00131803
+[32mstep   4900:[39m train_loss=1.8932, lr=0.00128743
+[32mstep   5000:[39m train_loss=1.8216, lr=0.00125659
+[33meval   5000:[39m valid_loss=1.9076
+[32mstep   5100:[39m train_loss=2.0702, lr=0.00122557
+[32mstep   5200:[39m train_loss=1.8123, lr=0.00119439
+[32mstep   5300:[39m train_loss=1.8053, lr=0.00116309
+[32mstep   5400:[39m train_loss=1.9167, lr=0.00113172
+[32mstep   5500:[39m train_loss=1.9529, lr=0.00110031
+[32mstep   5600:[39m train_loss=1.7876, lr=0.0010689
+[32mstep   5700:[39m train_loss=1.8617, lr=0.00103753
+[32mstep   5800:[39m train_loss=1.9425, lr=0.00100624
+[32mstep   5900:[39m train_loss=1.7252, lr=0.000975055
+[32mstep   6000:[39m train_loss=1.8021, lr=0.000944026
+[33meval   6000:[39m valid_loss=1.8598
+[32mstep   6100:[39m train_loss=1.8897, lr=0.000913187
+[32mstep   6200:[39m train_loss=1.9293, lr=0.000882575
+[32mstep   6300:[39m train_loss=1.9362, lr=0.000852228
+[32mstep   6400:[39m train_loss=1.6821, lr=0.000822184
+[32mstep   6500:[39m train_loss=1.7368, lr=0.000792477
+[32mstep   6600:[39m train_loss=1.5560, lr=0.000763145
+[32mstep   6700:[39m train_loss=1.7714, lr=0.000734224
+[32mstep   6800:[39m train_loss=1.7763, lr=0.000705748
+[32mstep   6900:[39m train_loss=1.6759, lr=0.000677753
+[32mstep   7000:[39m train_loss=1.9021, lr=0.000650272
+[33meval   7000:[39m valid_loss=1.7413
+[32mstep   7100:[39m train_loss=1.7345, lr=0.000623339
+[32mstep   7200:[39m train_loss=1.7981, lr=0.000596987
+[32mstep   7300:[39m train_loss=1.8545, lr=0.000571247
+[32mstep   7400:[39m train_loss=1.6995, lr=0.000546152
+[32mstep   7500:[39m train_loss=1.7166, lr=0.000521732
+[32mstep   7600:[39m train_loss=1.7901, lr=0.000498016
+[32mstep   7700:[39m train_loss=1.7387, lr=0.000475033
+[32mstep   7800:[39m train_loss=1.7685, lr=0.000452812
+[32mstep   7900:[39m train_loss=1.8152, lr=0.00043138
+[32mstep   8000:[39m train_loss=1.5908, lr=0.000410762
+[33meval   8000:[39m valid_loss=1.7369
+[32mstep   8100:[39m train_loss=1.7659, lr=0.000390984
+[32mstep   8200:[39m train_loss=1.7352, lr=0.000372069
+[32mstep   8300:[39m train_loss=1.8803, lr=0.000354042
+[32mstep   8400:[39m train_loss=1.6809, lr=0.000336923
+[32mstep   8500:[39m train_loss=1.6781, lr=0.000320734
+[32mstep   8600:[39m train_loss=1.6642, lr=0.000305495
+[32mstep   8700:[39m train_loss=1.5443, lr=0.000291223
+[32mstep   8800:[39m train_loss=1.5346, lr=0.000277937
+[32mstep   8900:[39m train_loss=1.6395, lr=0.000265652
+[32mstep   9000:[39m train_loss=1.7276, lr=0.000254384
+[33meval   9000:[39m valid_loss=1.7167
+[32mstep   9100:[39m train_loss=1.7870, lr=0.000244146
+[32mstep   9200:[39m train_loss=1.5991, lr=0.000234951
+[32mstep   9300:[39m train_loss=1.6684, lr=0.00022681
+[32mstep   9400:[39m train_loss=1.7620, lr=0.000219733
+[32mstep   9500:[39m train_loss=1.7004, lr=0.000213728
+[32mstep   9600:[39m train_loss=1.6611, lr=0.000208803
+[32mstep   9700:[39m train_loss=1.6213, lr=0.000204963
+[32mstep   9800:[39m train_loss=1.5889, lr=0.000202214
+[32mstep   9900:[39m train_loss=1.7340, lr=0.000200559
+[32mstep  10000:[39m train_loss=1.6688, lr=0.0002
+[33meval  10000:[39m valid_loss=1.6691
+checkpoint saved: artifacts/lm_experiments/grid_search_batch_size/tinystories_bs16_mps_20260601/checkpoints/step_00010000.pt

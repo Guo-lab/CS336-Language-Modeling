@@ -1,0 +1,35 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260531/sanity_lr_schedule.log
+Running sanity checks
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== sanity: sanity_check/test_lr_schedule.py ==
+Cosine LR schedule with warmup
+max_lr=1.0, min_lr=0.1, warmup_iters=7, cosine_cycle_iters=21
+warmup: linearly rises; cosine: smoothly decays; post: stays at min_lr
+
+00  warmup  lr=0.000000  
+01  warmup  lr=0.142857  #####
+02  warmup  lr=0.285714  ##########
+03  warmup  lr=0.428571  ###############
+04  warmup  lr=0.571429  #####################
+05  warmup  lr=0.714286  ##########################
+06  warmup  lr=0.857143  ###############################
+07  cosine  lr=1.000000  ####################################
+08  cosine  lr=0.988718  ####################################
+09  cosine  lr=0.955436  ##################################
+10  cosine  lr=0.901824  ################################
+11  cosine  lr=0.830570  ##############################
+12  cosine  lr=0.745248  ###########################
+13  cosine  lr=0.650134  #######################
+14  cosine  lr=0.550000  ####################
+15  cosine  lr=0.449866  ################
+16  cosine  lr=0.354752  #############
+17  cosine  lr=0.269430  ##########
+18  cosine  lr=0.198176  #######
+19  cosine  lr=0.144564  #####
+20  cosine  lr=0.111282  ####
+21  cosine  lr=0.100000  ####
+22  post    lr=0.100000  ####
+23  post    lr=0.100000  ####
+24  post    lr=0.100000  ####
+DONE sanity: sanity_check/test_lr_schedule.py

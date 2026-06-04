@@ -1,0 +1,9 @@
+{
+  "dtype": "uint16",
+  "elapsed_seconds": 32.140778000000864,
+  "input": "data/owt_valid.txt",
+  "output": "artifacts/lm_data/owt_valid_32k.npy",
+  "tokenizer": "artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k",
+  "tokens": 66401098,
+  "tokens_per_second": 2065945.5723193202
+}

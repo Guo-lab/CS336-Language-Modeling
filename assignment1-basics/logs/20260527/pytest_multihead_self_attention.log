@@ -1,0 +1,12 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260527/pytest_multihead_self_attention.log
+Running pytest files
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== pytest: tests/test_model.py ==
+pytest args: -q -k test_multihead_self_attention --tb=short
+
+tests/test_model.py::test_multihead_self_attention PASSED
+tests/test_model.py::test_multihead_self_attention_with_rope PASSED
+
+======================= 2 passed, 11 deselected in 0.02s =======================
+DONE pytest: tests/test_model.py

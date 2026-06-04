@@ -56,7 +56,7 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
+# *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -122,14 +122,21 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.venv/
+.venv-*/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
 
+# Local debug/test logs
+# logs/
+
 # Local datasets
 data/
+artifacts/lm_data/*.npy
+artifacts/**/*.pt
 
 # Spyder project settings
 .spyderproject

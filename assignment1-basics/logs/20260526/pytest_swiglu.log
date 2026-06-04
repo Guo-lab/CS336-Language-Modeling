@@ -1,0 +1,39 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260526/pytest_swiglu.log
+Running pytest files
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== pytest: tests/test_model.py ==
+pytest args: --tb=no
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics
+configfile: pyproject.toml
+plugins: jaxtyping-0.3.10, timeout-2.4.0
+collected 13 items
+
+tests/test_model.py::test_linear PASSED
+tests/test_model.py::test_embedding PASSED
+tests/test_model.py::test_swiglu PASSED
+tests/test_model.py::test_scaled_dot_product_attention FAILED
+tests/test_model.py::test_4d_scaled_dot_product_attention FAILED
+tests/test_model.py::test_multihead_self_attention FAILED
+tests/test_model.py::test_multihead_self_attention_with_rope FAILED
+tests/test_model.py::test_transformer_lm FAILED
+tests/test_model.py::test_transformer_lm_truncated_input FAILED
+tests/test_model.py::test_transformer_block FAILED
+tests/test_model.py::test_rmsnorm PASSED
+tests/test_model.py::test_rope FAILED
+tests/test_model.py::test_silu_matches_pytorch FAILED
+
+=========================== short test summary info ============================
+FAILED tests/test_model.py::test_scaled_dot_product_attention - NotImplemente...
+FAILED tests/test_model.py::test_4d_scaled_dot_product_attention - NotImpleme...
+FAILED tests/test_model.py::test_multihead_self_attention - NotImplementedError
+FAILED tests/test_model.py::test_multihead_self_attention_with_rope - NotImpl...
+FAILED tests/test_model.py::test_transformer_lm - NotImplementedError
+FAILED tests/test_model.py::test_transformer_lm_truncated_input - NotImplemen...
+FAILED tests/test_model.py::test_transformer_block - NotImplementedError
+FAILED tests/test_model.py::test_rope - NotImplementedError
+FAILED tests/test_model.py::test_silu_matches_pytorch - NotImplementedError
+========================= 9 failed, 4 passed in 0.04s ==========================
+FAIL pytest: tests/test_model.py

@@ -1,0 +1,73 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260525/sanity_tokenizer_decode.log
+Running sanity checks
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== sanity: sanity_check/test_tokenizer.py ==
+Tokenizer Init Sanity Checks
+
+== init stores vocab ==
+expected: {0: b'a', 1: b'b', 2: b'ab'}
+result:   {0: b'a', 1: b'b', 2: b'ab'}
+PASS
+
+== init stores merges ==
+expected: [(b'a', b'b')]
+result:   [(b'a', b'b')]
+PASS
+
+== init stores special tokens ==
+expected: ['<|endoftext|>']
+result:   ['<|endoftext|>']
+PASS
+
+Tokenizer from_files Sanity Checks
+
+== from_files vocab size ==
+expected: 32000
+result:   32000
+PASS
+
+== from_files merge count ==
+expected: 31743
+result:   31743
+PASS
+
+== first byte token ==
+expected: b'\x00'
+result:   b'\x00'
+PASS
+
+== first merge preserves order ==
+expected: (b' ', b't')
+result:   (b' ', b't')
+PASS
+
+== second merge preserves order ==
+expected: (b' ', b'a')
+result:   (b' ', b'a')
+PASS
+
+== third merge preserves order ==
+expected: (b'h', b'e')
+result:   (b'h', b'e')
+PASS
+
+== special token id 256 ==
+expected: b'<|endoftext|>'
+result:   b'<|endoftext|>'
+PASS
+
+Tokenizer Decode Sanity Checks
+
+== decode ascii bytes ==
+expected: 'hi'
+result:   'hi'
+PASS
+
+== decode utf-8 bytes ==
+expected: 'é'
+result:   'é'
+PASS
+
+Summary: 3/3 passed
+DONE sanity: sanity_check/test_tokenizer.py

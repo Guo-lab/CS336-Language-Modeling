@@ -1,0 +1,503 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260531/sanity_pipeline.log
+Running sanity checks
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+
+== sanity: sanity_check/test_bpe.py ==
+Initial Vocab Sanity Checks
+
+== byte vocabulary without specials ==
+special_tokens: []
+expected_size: 256
+expected_items: {0: b'\x00', 65: b'A', 255: b'\xff'}
+result_size: 256
+result_items: {0: b'\x00', 65: b'A', 255: b'\xff'}
+PASS
+
+== append special tokens after bytes ==
+special_tokens: ['<|endoftext|>', '<pad>']
+expected_size: 258
+expected_items: {256: b'<|endoftext|>', 257: b'<pad>'}
+result_size: 258
+result_items: {256: b'<|endoftext|>', 257: b'<pad>'}
+PASS
+
+Special Token Split Sanity Checks
+
+== no special tokens ==
+text: 'hello'
+special_tokens: []
+expected: ['hello']
+result:   ['hello']
+PASS
+
+== single boundary ==
+text: 'hi<|endoftext|>there'
+special_tokens: ['<|endoftext|>']
+expected: ['hi', 'there']
+result:   ['hi', 'there']
+PASS
+
+== repeated boundary ==
+text: 'a<|endoftext|><|endoftext|>b'
+special_tokens: ['<|endoftext|>']
+expected: ['a', 'b']
+result:   ['a', 'b']
+PASS
+
+== leading and trailing boundary ==
+text: '<|endoftext|>middle<|endoftext|>'
+special_tokens: ['<|endoftext|>']
+expected: ['middle']
+result:   ['middle']
+PASS
+
+== multiple special tokens ==
+text: 'a<pad>b<|endoftext|>c'
+special_tokens: ['<|endoftext|>', '<pad>']
+expected: ['a', 'b', 'c']
+result:   ['a', 'b', 'c']
+PASS
+Pretokenize Sanity Checks
+
+== basic ascii ==
+text: 'hi!'
+expected: [(b'h', b'i'), (b'!',)]
+result:   [(b'h', b'i'), (b'!',)]
+expected flattened: b'hi!'
+result flattened:   b'hi!'
+PASS
+
+== space and punctuation ==
+text: 'Hello, world!'
+expected: [(b'H', b'e', b'l', b'l', b'o'), (b',',), (b' ', b'w', b'o', b'r', b'l', b'd'), (b'!',)]
+result:   [(b'H', b'e', b'l', b'l', b'o'), (b',',), (b' ', b'w', b'o', b'r', b'l', b'd'), (b'!',)]
+expected flattened: b'Hello, world!'
+result flattened:   b'Hello, world!'
+PASS
+
+== utf-8 bytes ==
+text: 'cafe é'
+expected: [(b'c', b'a', b'f', b'e'), (b' ', b'\xc3', b'\xa9')]
+result:   [(b'c', b'a', b'f', b'e'), (b' ', b'\xc3', b'\xa9')]
+expected flattened: b'cafe \xc3\xa9'
+result flattened:   b'cafe \xc3\xa9'
+PASS
+
+Pair Count Sanity Checks
+
+== count adjacent pairs ==
+words: [(b'b', b'a', b'n', b'a', b'n', b'a')]
+expected: {(b'b', b'a'): 1, (b'a', b'n'): 2, (b'n', b'a'): 2}
+result:   {(b'b', b'a'): 1, (b'a', b'n'): 2, (b'n', b'a'): 2}
+PASS
+
+== do not count across pretokens ==
+words: [(b'a', b'b'), (b'c', b'd')]
+expected: {(b'a', b'b'): 1, (b'c', b'd'): 1}
+result:   {(b'a', b'b'): 1, (b'c', b'd'): 1}
+PASS
+
+== short pretokens have no pairs ==
+words: [(), (b'x',)]
+expected: {}
+result:   {}
+PASS
+
+Pretoken Count Sanity Checks
+
+== count repeated pretokens across chunks ==
+chunks: ['ab ab', 'ab']
+expected: {(b'a', b'b'): 2, (b' ', b'a', b'b'): 1}
+result:   {(b'a', b'b'): 2, (b' ', b'a', b'b'): 1}
+PASS
+
+== empty chunks produce no counts ==
+chunks: ['', '']
+expected: {}
+result:   {}
+PASS
+
+Weighted Pair Count Sanity Checks
+
+== weight pair counts by pretoken frequency ==
+pretoken_counts: {(b'a', b'b'): 3, (b'a', b'c'): 2}
+expected: {(b'a', b'b'): 3, (b'a', b'c'): 2}
+result:   {(b'a', b'b'): 3, (b'a', b'c'): 2}
+PASS
+
+== skip short counted pretokens ==
+pretoken_counts: {(): 5, (b'x',): 4}
+expected: {}
+result:   {}
+PASS
+
+Merge Pair Sanity Checks
+
+== merge one pair ==
+words: [(b'a', b'b', b'c')]
+pair: (b'a', b'b')
+expected: [(b'ab', b'c')]
+result:   [(b'ab', b'c')]
+PASS
+
+== merge multiple pretokens ==
+words: [(b'a', b'b'), (b'c', b'a', b'b')]
+pair: (b'a', b'b')
+expected: [(b'ab',), (b'c', b'ab')]
+result:   [(b'ab',), (b'c', b'ab')]
+PASS
+
+== left-to-right non-overlapping merge ==
+words: [(b'a', b'a', b'a')]
+pair: (b'a', b'a')
+expected: [(b'aa', b'a')]
+result:   [(b'aa', b'a')]
+PASS
+
+== no matching pair leaves words unchanged ==
+words: [(b'a', b'b', b'c')]
+pair: (b'x', b'y')
+expected: [(b'a', b'b', b'c')]
+result:   [(b'a', b'b', b'c')]
+PASS
+
+Merge Pretoken Count Sanity Checks
+
+== merge counted pretokens ==
+pretoken_counts: {(b'a', b'b'): 2, (b'c', b'a', b'b'): 1}
+pair: (b'a', b'b')
+expected: {(b'ab',): 2, (b'c', b'ab'): 1}
+result:   {(b'ab',): 2, (b'c', b'ab'): 1}
+PASS
+
+== combine counts when merges collide ==
+pretoken_counts: {(b'a', b'b'): 2, (b'ab',): 3}
+pair: (b'a', b'b')
+expected: {(b'ab',): 5}
+result:   {(b'ab',): 5}
+PASS
+
+Train BPE Sanity Checks
+
+== learn one obvious merge ==
+text: 'abab'
+vocab_size: 257
+special_tokens: []
+expected_merges: [(b'a', b'b')]
+expected_vocab_items: {256: b'ab'}
+result_merges: [(b'a', b'b')]
+result_vocab_items: {256: b'ab'}
+PASS
+
+== special token is vocab only ==
+text: 'ab<|endoftext|>ab'
+vocab_size: 258
+special_tokens: ['<|endoftext|>']
+expected_merges: [(b'a', b'b')]
+expected_vocab_items: {256: b'<|endoftext|>', 257: b'ab'}
+result_merges: [(b'a', b'b')]
+result_vocab_items: {256: b'<|endoftext|>', 257: b'ab'}
+PASS
+
+== stop when no pairs exist ==
+text: '!'
+vocab_size: 258
+special_tokens: []
+expected_merges: []
+expected_vocab_items: {}
+result_merges: []
+result_vocab_items: {}
+PASS
+
+== tie chooses lexicographically largest pair ==
+text: 'abac'
+vocab_size: 257
+special_tokens: []
+expected_merges: [(b'b', b'a')]
+expected_vocab_items: {256: b'ba'}
+result_merges: [(b'b', b'a')]
+result_vocab_items: {256: b'ba'}
+PASS
+
+Summary: 27/27 passed
+DONE sanity: sanity_check/test_bpe.py
+
+== sanity: sanity_check/test_generation.py ==
+Generation sanity check
+TinyStepModel returns very high logits for scripted next-token IDs.
+This checks decoding mechanics, not text quality.
+
+Note: CHECK_LOG=1 disables ANSI colors in saved logs.
+
+Case 1: PASS top-p keeps at least the highest-probability token
+  logits:         [[0.10000000149011612, 8.0, 0.20000000298023224, 2.0]]
+  top_p:          0.01
+  expected shape: (1, 1)
+  actual shape:   (1, 1)
+  expected token: [[1]]
+  actual token:   [[1]]
+
+Case 2: PASS plain multinomial sampling supports batched logits
+  logits:         [[0.10000000149011612, 3.0, 0.20000000298023224, 2.0], [4.0, 0.10000000149011612, 0.20000000298023224, 0.30000001192092896]]
+  logits shape:   (2, 4)
+  expected shape: (2, 1)
+  actual shape:   (2, 1)
+  sampled tokens: [[1], [0]]
+
+Case 3: PASS decode appends tokens until eos
+  prompt:         [[0, 4, 4]]
+  scripted next:  [1, 2]
+  fake logits:    selected token gets 20.0, all others get -20.0
+  expected:       [[0, 4, 4, 1, 2]]
+  actual:         [[0, 4, 4, 1, 2]]
+
+Case 4: PASS decode respects max_new_tokens when eos is absent
+  prompt:         [[0, 4]]
+  scripted next:  [1, 3, 4]
+  fake logits:    selected token gets 20.0, all others get -20.0
+  expected:       [[0, 4, 1, 3, 4]]
+  actual:         [[0, 4, 1, 3, 4]]
+
+Case 5: PASS max_new_tokens=0 returns the prompt without model calls
+  prompt:         [[0, 4]]
+  fake logits:    not produced because model should not be called
+  expected:       [[0, 4]]
+  actual:         [[0, 4]]
+  model calls:    0
+
+Case 6: PASS context_length crops model input while keeping full output history
+  fake logits:            selected token gets 20.0, all others get -20.0
+  prompt length:          5
+  context_length:         3
+  expected max input len: 3
+  actual input lengths:   [3, 3]
+DONE sanity: sanity_check/test_generation.py
+
+== sanity: sanity_check/test_lm_data.py ==
+LM data sanity check
+Compares tokenized .npy prefixes against freshly encoded source text.
+
+
+== tinystories_train_10k.npy ==
+source path:   data/TinyStoriesV2-GPT4-train.txt
+data path:     artifacts/lm_data/tinystories_train_10k.npy
+tokenizer:     artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+shape:         (540796778,)
+dtype:         uint16
+expected ids:  [10, 430, 439, 259, 398, 401, 283, 259, 390, 496, 402, 551, 46, 551, 502, 266, 1425, 263, 1569, 623]
+actual ids:    [10, 430, 439, 259, 398, 401, 283, 259, 390, 496, 402, 551, 46, 551, 502, 266, 1425, 263, 1569, 623]
+first mismatch token offset: 66
+expected ids around mismatch: [309, 286, 283, 2110, 33, 6327, 10, 1028, 324, 44, 1200]
+actual ids around mismatch:   [309, 286, 283, 2110, 33, 32, 4942, 1028, 324, 44, 1200]
+expected decoded text:
+
+Once upon a time there was a little boy named Ben. Ben loved to explore the world around him. He saw many amazing things, like beautiful vases that were on display in a store. One day, Ben was walking through the store when he came across a very special vase. When Ben saw it he was amazed!  
+He said, “Wow, that is a really amazing vase
+actual decoded text:
+
+Once upon a time there was a little boy named Ben. Ben loved to explore the world around him. He saw many amazing things, like beautiful vases that were on display in a store. One day, Ben was walking through the store when he came across a very special vase. When Ben saw it he was amazed!  
+He said, “Wow, that is a really amazing vase
+SOFT PASS token ids differ, decoded text matches
+
+== tinystories_valid_10k.npy ==
+source path:   data/TinyStoriesV2-GPT4-valid.txt
+data path:     artifacts/lm_data/tinystories_valid_10k.npy
+tokenizer:     artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k
+shape:         (5461210,)
+dtype:         uint16
+expected ids:  [117, 862, 492, 499, 266, 322, 608, 370, 263, 911, 465, 44, 338, 1965, 2594, 349, 1603, 285, 3147, 534]
+actual ids:    [117, 862, 492, 499, 266, 322, 608, 370, 263, 911, 465, 44, 338, 1965, 2594, 349, 1603, 285, 3147, 534]
+expected decoded text:
+u don't have to be scared of the loud dog, I'll protect you". The mole felt so safe with the little girl. She was very kind and the mole soon came to trust her. He leaned against her and she kept him safe. The mole had found his best friend.
+<|endoftext|>
+Once upon a time, in a warm and sunny place, there was a big pit. A
+actual decoded text:
+u don't have to be scared of the loud dog, I'll protect you". The mole felt so safe with the little girl. She was very kind and the mole soon came to trust her. He leaned against her and she kept him safe. The mole had found his best friend.
+<|endoftext|>
+Once upon a time, in a warm and sunny place, there was a big pit. A
+PASS exact token-id match
+
+== owt_train_32k.npy ==
+source path:   data/owt_train.txt
+data path:     artifacts/lm_data/owt_train_32k.npy
+tokenizer:     artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+shape:         (2727120452,)
+dtype:         uint16
+expected ids:  [2001, 3384, 696, 361, 473, 284, 3890, 2046, 361, 1880, 63, 10, 10, 2070, 1079, 7644, 7600, 279, 321, 258]
+actual ids:    [2001, 3384, 696, 361, 473, 284, 3890, 2046, 361, 1880, 63, 10, 10, 2070, 1079, 7644, 7600, 279, 321, 258]
+expected decoded text:
+What wouldn't you do to save someone you love?
+
+When They Come Calling is a modern ghost story, a suspenseful weaving of urban battles, romance, and supernatural intrigue.
+
+Anna is a physician from Kansas City. She’s spent her life giving and caring to others while trying to hide how different she is. Anna has lost everyone she’s ever loved
+actual decoded text:
+What wouldn't you do to save someone you love?
+
+When They Come Calling is a modern ghost story, a suspenseful weaving of urban battles, romance, and supernatural intrigue.
+
+Anna is a physician from Kansas City. She’s spent her life giving and caring to others while trying to hide how different she is. Anna has lost everyone she’s ever loved
+PASS exact token-id match
+
+== owt_valid_32k.npy ==
+source path:   data/owt_valid.txt
+data path:     artifacts/lm_data/owt_valid_32k.npy
+tokenizer:     artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+shape:         (66401098,)
+dtype:         uint16
+expected ids:  [76, 4092, 2148, 86, 4192, 5351, 44, 11970, 46, 746, 331, 1128, 548, 3307, 19138, 8075, 382, 284, 309, 2584]
+actual ids:    [76, 4092, 2148, 86, 4192, 5351, 44, 11970, 46, 746, 331, 1128, 548, 3307, 19138, 8075, 382, 284, 309, 2584]
+expected decoded text:
+LOUISVILLE, Ky. — A few unflattering reviews are to be expected with any hotel, particularly one whose rates start at $49 per night. But while complaints about shabby rooms and thin towels are common in the industry, ones like these, from TripAdvisor.com, are not: “It is a clean hotel but there are a lot of homeless
+actual decoded text:
+LOUISVILLE, Ky. — A few unflattering reviews are to be expected with any hotel, particularly one whose rates start at $49 per night. But while complaints about shabby rooms and thin towels are common in the industry, ones like these, from TripAdvisor.com, are not: “It is a clean hotel but there are a lot of homeless
+PASS exact token-id match
+
+Checked 4 dataset(s).
+DONE sanity: sanity_check/test_lm_data.py
+
+== sanity: sanity_check/test_lr_schedule.py ==
+Cosine LR schedule with warmup
+max_lr=1.0, min_lr=0.1, warmup_iters=7, cosine_cycle_iters=21
+warmup: linearly rises; cosine: smoothly decays; post: stays at min_lr
+
+00  warmup  lr=0.000000  
+01  warmup  lr=0.142857  #####
+02  warmup  lr=0.285714  ##########
+03  warmup  lr=0.428571  ###############
+04  warmup  lr=0.571429  #####################
+05  warmup  lr=0.714286  ##########################
+06  warmup  lr=0.857143  ###############################
+07  cosine  lr=1.000000  ####################################
+08  cosine  lr=0.988718  ####################################
+09  cosine  lr=0.955436  ##################################
+10  cosine  lr=0.901824  ################################
+11  cosine  lr=0.830570  ##############################
+12  cosine  lr=0.745248  ###########################
+13  cosine  lr=0.650134  #######################
+14  cosine  lr=0.550000  ####################
+15  cosine  lr=0.449866  ################
+16  cosine  lr=0.354752  #############
+17  cosine  lr=0.269430  ##########
+18  cosine  lr=0.198176  #######
+19  cosine  lr=0.144564  #####
+20  cosine  lr=0.111282  ####
+21  cosine  lr=0.100000  ####
+22  post    lr=0.100000  ####
+23  post    lr=0.100000  ####
+24  post    lr=0.100000  ####
+DONE sanity: sanity_check/test_lr_schedule.py
+
+== sanity: sanity_check/test_tokenizer.py ==
+Tokenizer Init Sanity Checks
+
+== init stores vocab ==
+expected: {0: b'a', 1: b'b', 2: b'ab'}
+result:   {0: b'a', 1: b'b', 2: b'ab'}
+PASS
+
+== init stores merges ==
+expected: [(b'a', b'b')]
+result:   [(b'a', b'b')]
+PASS
+
+== init stores special tokens ==
+expected: ['<|endoftext|>']
+result:   ['<|endoftext|>']
+PASS
+
+Tokenizer from_files Sanity Checks
+SKIP from_files artifact check: [Errno 2] No such file or directory: '/Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/artifacts/tokenizers_chunked_mp8/owt_train_32k/vocab.json'
+
+Tokenizer Decode Sanity Checks
+
+== decode ascii bytes ==
+expected: 'hi'
+result:   'hi'
+PASS
+
+== decode utf-8 bytes ==
+expected: 'é'
+result:   'é'
+PASS
+
+Summary: 2/2 passed
+DONE sanity: sanity_check/test_tokenizer.py
+
+== sanity: sanity_check/test_train_lm.py ==
+Train LM sanity check
+Creates patterned token .npy files, runs a tiny train loop, and checks outputs.
+The pattern is 0, 1, ..., 15 repeated, so loss should decrease.
+
+Initial train command:
+  /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python scripts/train_lm.py --train-data /var/folders/f_/3vvbxng55nq10p8gvpxx0d0r0000gn/T/train_lm_sanity_5xi23b29/tiny_train.npy --valid-data /var/folders/f_/3vvbxng55nq10p8gvpxx0d0r0000gn/T/train_lm_sanity_5xi23b29/tiny_valid.npy --vocab-size 16 --run-name sanity_check --out-dir artifacts/lm_experiments --context-length 8 --batch-size 2 --num-layers 1 --d-model 16 --num-heads 4 --d-ff 64 --max-iters 50 --warmup-iters 5 --cosine-cycle-iters 50 --log-every 5 --eval-every 25 --eval-iters 1 --save-every 50 --max-lr 0.01 --min-lr 0.001
+
+Initial train stdout:
+[1m[36mTransformer LM training[0m
+[32mRun directory:[0m artifacts/lm_experiments/sanity_check
+[32mConfig written to:[0m artifacts/lm_experiments/sanity_check/config.json
+[32mtrain data:[0m tokens=8,192, dtype=uint16, shape=(8192,)
+[32mvalid data:[0m tokens=2,048, dtype=uint16, shape=(2048,)
+[33mbatch smoke:[0m x.shape=(2, 8), y.shape=(2, 8), device=cpu
+[32mmodel:[0m parameters=4,656, device=cpu
+[33mforward smoke:[0m logits.shape=(2, 8, 16), expected=(2, 8, 16)
+[1m[36mStarting training loop[0m [2mfrom iteration 0 to 50[0m
+[32mstep      1:[0m train_loss=3.4141, lr=0
+[32mstep      5:[0m train_loss=2.8553, lr=0.008
+[32mstep     10:[0m train_loss=1.2113, lr=0.00982568
+[32mstep     15:[0m train_loss=0.7744, lr=0.00914058
+[32mstep     20:[0m train_loss=0.4803, lr=0.00801637
+[32mstep     25:[0m train_loss=0.3385, lr=0.00658865
+[33meval     25:[0m valid_loss=0.3677
+[32mstep     30:[0m train_loss=0.4149, lr=0.00502962
+[32mstep     35:[0m train_loss=0.2056, lr=0.00352733
+[32mstep     40:[0m train_loss=0.1732, lr=0.00226297
+[32mstep     45:[0m train_loss=0.1423, lr=0.00138905
+[32mstep     50:[0m train_loss=0.1895, lr=0.00101096
+[33meval     50:[0m valid_loss=0.1204
+[2mcheckpoint saved: artifacts/lm_experiments/sanity_check/checkpoints/step_00000050.pt[0m
+
+Run directory:   artifacts/lm_experiments/sanity_check
+Config path:     artifacts/lm_experiments/sanity_check/config.json
+Metrics path:    artifacts/lm_experiments/sanity_check/metrics.jsonl
+Checkpoint path: artifacts/lm_experiments/sanity_check/checkpoints/step_00000050.pt
+Metric records:  13
+First metric:    {'lr': 0.0, 'step': 1, 'train_loss': 3.414107322692871, 'wall_clock_seconds': 0.30426692962646484}
+Train loss:      3.4141 -> 0.1895
+
+Resume train command:
+  /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python scripts/train_lm.py --train-data /var/folders/f_/3vvbxng55nq10p8gvpxx0d0r0000gn/T/train_lm_sanity_5xi23b29/tiny_train.npy --valid-data /var/folders/f_/3vvbxng55nq10p8gvpxx0d0r0000gn/T/train_lm_sanity_5xi23b29/tiny_valid.npy --vocab-size 16 --run-name sanity_check --out-dir artifacts/lm_experiments --context-length 8 --batch-size 2 --num-layers 1 --d-model 16 --num-heads 4 --d-ff 64 --max-iters 105 --warmup-iters 5 --cosine-cycle-iters 50 --log-every 5 --eval-every 25 --eval-iters 1 --save-every 50 --max-lr 0.01 --min-lr 0.001 --resume-from /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/artifacts/lm_experiments/sanity_check/checkpoints/step_00000050.pt
+
+Resume train stdout:
+[1m[36mTransformer LM training[0m
+[32mRun directory:[0m artifacts/lm_experiments/sanity_check
+[32mConfig written to:[0m artifacts/lm_experiments/sanity_check/config.json
+[32mtrain data:[0m tokens=8,192, dtype=uint16, shape=(8192,)
+[32mvalid data:[0m tokens=2,048, dtype=uint16, shape=(2048,)
+[33mbatch smoke:[0m x.shape=(2, 8), y.shape=(2, 8), device=cpu
+[33mresumed:[0m /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/artifacts/lm_experiments/sanity_check/checkpoints/step_00000050.pt at iteration 50
+[32mmodel:[0m parameters=4,656, device=cpu
+[33mforward smoke:[0m logits.shape=(2, 8, 16), expected=(2, 8, 16)
+[1m[36mStarting training loop[0m [2mfrom iteration 50 to 105[0m
+[32mstep     55:[0m train_loss=0.1114, lr=0.001
+[32mstep     60:[0m train_loss=0.1191, lr=0.001
+[32mstep     65:[0m train_loss=0.1171, lr=0.001
+[32mstep     70:[0m train_loss=0.0857, lr=0.001
+[32mstep     75:[0m train_loss=0.0932, lr=0.001
+[33meval     75:[0m valid_loss=0.1151
+[32mstep     80:[0m train_loss=0.1235, lr=0.001
+[32mstep     85:[0m train_loss=0.0914, lr=0.001
+[32mstep     90:[0m train_loss=0.0876, lr=0.001
+[32mstep     95:[0m train_loss=0.0799, lr=0.001
+[32mstep    100:[0m train_loss=0.0976, lr=0.001
+[33meval    100:[0m valid_loss=0.0676
+[2mcheckpoint saved: artifacts/lm_experiments/sanity_check/checkpoints/step_00000100.pt[0m
+[32mstep    105:[0m train_loss=0.0828, lr=0.001
+[33meval    105:[0m valid_loss=0.0662
+[2mcheckpoint saved: artifacts/lm_experiments/sanity_check/checkpoints/step_00000105.pt[0m
+Resumed checkpoint path: artifacts/lm_experiments/sanity_check/checkpoints/step_00000105.pt
+Metric records after resume: 27
+Resume train loss: 0.1895 -> 0.0828
+
+PASS train_lm.py trains, learns a tiny pattern, logs metrics, saves, and resumes
+DONE sanity: sanity_check/test_train_lm.py

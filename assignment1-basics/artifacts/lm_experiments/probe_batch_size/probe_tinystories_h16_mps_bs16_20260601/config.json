@@ -1,0 +1,52 @@
+{
+  "checkpoint": {
+    "resume_from": null,
+    "save_every": 1000000
+  },
+  "data": {
+    "device": "mps",
+    "seed": 0,
+    "train_data": "artifacts/lm_data/tinystories_train_10k.npy",
+    "valid_data": "artifacts/lm_data/tinystories_valid_10k.npy"
+  },
+  "logging": {
+    "eval_every": 1000000,
+    "eval_iters": 1,
+    "log_every": 20,
+    "out_dir": "artifacts/lm_experiments/probe_batch_size",
+    "run_name": "probe_tinystories_h16_mps_bs16_20260601",
+    "sample_every": 0,
+    "sample_max_new_tokens": 64,
+    "sample_prompt": null,
+    "sample_temperature": 1.0,
+    "sample_top_p": 0.9,
+    "tokenizer": "artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/tinystories_train_10k",
+    "wandb_entity": null,
+    "wandb_mode": "offline",
+    "wandb_project": "cs336-a1"
+  },
+  "model": {
+    "context_length": 256,
+    "d_ff": 1344,
+    "d_model": 512,
+    "num_heads": 16,
+    "num_layers": 4,
+    "rope_theta": 10000.0,
+    "vocab_size": 10000
+  },
+  "optimizer": {
+    "batch_size": 16,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "cosine_cycle_iters": 20,
+    "eps": 1e-08,
+    "grad_clip": 1.0,
+    "max_iters": 20,
+    "max_lr": 0.002,
+    "min_lr": 0.0002,
+    "warmup_iters": 2,
+    "weight_decay": 0.1
+  }
+}

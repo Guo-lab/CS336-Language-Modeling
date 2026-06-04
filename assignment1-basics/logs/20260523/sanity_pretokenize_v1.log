@@ -1,0 +1,179 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260523_pretokenize_v1_sanity.log
+Running sanity checks
+python: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv-bpe/bin/python
+
+== sanity: sanity_check/test_bpe.py ==
+Initial Vocab Sanity Checks
+
+== byte vocabulary without specials ==
+special_tokens: []
+expected_size: 256
+expected_items: {0: b'\x00', 65: b'A', 255: b'\xff'}
+result_size: 256
+result_items: {0: b'\x00', 65: b'A', 255: b'\xff'}
+PASS
+
+== append special tokens after bytes ==
+special_tokens: ['<|endoftext|>', '<pad>']
+expected_size: 258
+expected_items: {256: b'<|endoftext|>', 257: b'<pad>'}
+result_size: 258
+result_items: {256: b'<|endoftext|>', 257: b'<pad>'}
+PASS
+
+Special Token Split Sanity Checks
+
+== no special tokens ==
+text: 'hello'
+special_tokens: []
+expected: ['hello']
+result:   ['hello']
+PASS
+
+== single boundary ==
+text: 'hi<|endoftext|>there'
+special_tokens: ['<|endoftext|>']
+expected: ['hi', 'there']
+result:   ['hi', 'there']
+PASS
+
+== repeated boundary ==
+text: 'a<|endoftext|><|endoftext|>b'
+special_tokens: ['<|endoftext|>']
+expected: ['a', 'b']
+result:   ['a', 'b']
+PASS
+
+== leading and trailing boundary ==
+text: '<|endoftext|>middle<|endoftext|>'
+special_tokens: ['<|endoftext|>']
+expected: ['middle']
+result:   ['middle']
+PASS
+
+== multiple special tokens ==
+text: 'a<pad>b<|endoftext|>c'
+special_tokens: ['<|endoftext|>', '<pad>']
+expected: ['a', 'b', 'c']
+result:   ['a', 'b', 'c']
+PASS
+Pretokenize Sanity Checks
+
+== basic ascii ==
+text: 'hi!'
+expected: [(b'h', b'i'), (b'!',)]
+result:   [(b'h', b'i'), (b'!',)]
+expected flattened: b'hi!'
+result flattened:   b'hi!'
+PASS
+
+== space and punctuation ==
+text: 'Hello, world!'
+expected: [(b'H', b'e', b'l', b'l', b'o'), (b',',), (b' ', b'w', b'o', b'r', b'l', b'd'), (b'!',)]
+result:   [(b'H', b'e', b'l', b'l', b'o'), (b',',), (b' ', b'w', b'o', b'r', b'l', b'd'), (b'!',)]
+expected flattened: b'Hello, world!'
+result flattened:   b'Hello, world!'
+PASS
+
+== utf-8 bytes ==
+text: 'cafe é'
+expected: [(b'c', b'a', b'f', b'e'), (b' ', b'\xc3', b'\xa9')]
+result:   [(b'c', b'a', b'f', b'e'), (b' ', b'\xc3', b'\xa9')]
+expected flattened: b'cafe \xc3\xa9'
+result flattened:   b'cafe \xc3\xa9'
+PASS
+
+Pair Count Sanity Checks
+
+== count adjacent pairs ==
+words: [(b'b', b'a', b'n', b'a', b'n', b'a')]
+expected: {(b'b', b'a'): 1, (b'a', b'n'): 2, (b'n', b'a'): 2}
+result:   {(b'b', b'a'): 1, (b'a', b'n'): 2, (b'n', b'a'): 2}
+PASS
+
+== do not count across pretokens ==
+words: [(b'a', b'b'), (b'c', b'd')]
+expected: {(b'a', b'b'): 1, (b'c', b'd'): 1}
+result:   {(b'a', b'b'): 1, (b'c', b'd'): 1}
+PASS
+
+== short pretokens have no pairs ==
+words: [(), (b'x',)]
+expected: {}
+result:   {}
+PASS
+
+Merge Pair Sanity Checks
+
+== merge one pair ==
+words: [(b'a', b'b', b'c')]
+pair: (b'a', b'b')
+expected: [(b'ab', b'c')]
+result:   [(b'ab', b'c')]
+PASS
+
+== merge multiple pretokens ==
+words: [(b'a', b'b'), (b'c', b'a', b'b')]
+pair: (b'a', b'b')
+expected: [(b'ab',), (b'c', b'ab')]
+result:   [(b'ab',), (b'c', b'ab')]
+PASS
+
+== left-to-right non-overlapping merge ==
+words: [(b'a', b'a', b'a')]
+pair: (b'a', b'a')
+expected: [(b'aa', b'a')]
+result:   [(b'aa', b'a')]
+PASS
+
+== no matching pair leaves words unchanged ==
+words: [(b'a', b'b', b'c')]
+pair: (b'x', b'y')
+expected: [(b'a', b'b', b'c')]
+result:   [(b'a', b'b', b'c')]
+PASS
+
+Train BPE Sanity Checks
+
+== learn one obvious merge ==
+text: 'abab'
+vocab_size: 257
+special_tokens: []
+expected_merges: [(b'a', b'b')]
+expected_vocab_items: {256: b'ab'}
+result_merges: [(b'a', b'b')]
+result_vocab_items: {256: b'ab'}
+PASS
+
+== special token is vocab only ==
+text: 'ab<|endoftext|>ab'
+vocab_size: 258
+special_tokens: ['<|endoftext|>']
+expected_merges: [(b'a', b'b')]
+expected_vocab_items: {256: b'<|endoftext|>', 257: b'ab'}
+result_merges: [(b'a', b'b')]
+result_vocab_items: {256: b'<|endoftext|>', 257: b'ab'}
+PASS
+
+== stop when no pairs exist ==
+text: '!'
+vocab_size: 258
+special_tokens: []
+expected_merges: []
+expected_vocab_items: {}
+result_merges: []
+result_vocab_items: {}
+PASS
+
+== tie chooses lexicographically largest pair ==
+text: 'abac'
+vocab_size: 257
+special_tokens: []
+expected_merges: [(b'b', b'a')]
+expected_vocab_items: {256: b'ba'}
+result_merges: [(b'b', b'a')]
+result_vocab_items: {256: b'ba'}
+PASS
+
+Summary: 21/21 passed
+DONE sanity: sanity_check/test_bpe.py

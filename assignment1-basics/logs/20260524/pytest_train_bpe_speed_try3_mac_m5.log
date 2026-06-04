@@ -1,0 +1,13 @@
+log: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/logs/20260524/pytest_train_bpe_speed_try3_mac_m5.log
+Running pytest files
+python: .venv/bin/python
+
+== pytest: tests/test_train_bpe.py ==
+pytest args: -q
+
+tests/test_train_bpe.py::test_train_bpe_speed PASSED
+tests/test_train_bpe.py::test_train_bpe PASSED
+tests/test_train_bpe.py::test_train_bpe_special_tokens PASSED
+
+============================== 3 passed in 1.19s ===============================
+DONE pytest: tests/test_train_bpe.py
