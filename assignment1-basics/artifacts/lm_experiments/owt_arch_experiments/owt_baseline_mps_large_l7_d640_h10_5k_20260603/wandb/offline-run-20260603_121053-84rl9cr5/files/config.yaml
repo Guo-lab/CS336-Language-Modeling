@@ -1,0 +1,166 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.12.13
+    cli_version: 0.25.1
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1780513854
+    t:
+      1:
+      - 1
+      2:
+      - 1
+      3:
+      - 2
+      - 4
+      - 13
+      - 16
+      - 42
+      - 61
+      4: 3.12.13
+      5: 0.25.1
+      13: darwin-arm64
+    e:
+      l3ycwckq11jrk5o2ya8fk5kde32szqdx:
+        os: macOS-26.5-arm64-arm-64bit
+        python: CPython 3.12.13
+        started_at: '2026-06-03T19:10:53.575183Z'
+        args:
+        - --train-data
+        - artifacts/lm_data/owt_train_32k.npy
+        - --valid-data
+        - artifacts/lm_data/owt_valid_32k.npy
+        - --tokenizer
+        - artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+        - --run-name
+        - owt_baseline_mps_large_l7_d640_h10_5k_20260603
+        - --out-dir
+        - artifacts/lm_experiments/owt_arch_experiments
+        - --device
+        - mps
+        - --vocab-size
+        - '32000'
+        - --context-length
+        - '256'
+        - --batch-size
+        - '32'
+        - --num-layers
+        - '7'
+        - --d-model
+        - '640'
+        - --num-heads
+        - '10'
+        - --d-ff
+        - '1728'
+        - --max-iters
+        - '5000'
+        - --warmup-iters
+        - '500'
+        - --cosine-cycle-iters
+        - '5000'
+        - --max-lr
+        - 1e-3
+        - --min-lr
+        - 1e-4
+        - --log-every
+        - '100'
+        - --eval-every
+        - '1000'
+        - --eval-iters
+        - '20'
+        - --save-every
+        - '2500'
+        - --sample-every
+        - '1000'
+        - --sample-prompt
+        - The
+        - --sample-max-new-tokens
+        - '120'
+        - --sample-temperature
+        - '0.8'
+        - --sample-top-p
+        - '0.9'
+        - --wandb-project
+        - cs336-a1
+        - --wandb-mode
+        - offline
+        program: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/scripts/train_lm.py
+        code_path: assignment1-basics/scripts/train_lm.py
+        code_path_local: scripts/train_lm.py
+        git:
+          remote_url: https://github.com/Guo-lab/CS336-Language-Modeling.git
+          commit: d2ba3c0387dd7fb9e99c2fc263716e6f3a0c0b83
+        root: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_5k_20260603
+        host: Guos-MacBook-Pro-2.local
+        executable: /Users/guosiqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python
+        cpu_count: 10
+        cpu_count_logical: 10
+        disk:
+          /:
+            total: '494332366848'
+            used: '467155144704'
+        memory:
+          total: '17179869184'
+        apple: {}
+        writer_id: l3ycwckq11jrk5o2ya8fk5kde32szqdx
+data:
+  desc: null
+  value:
+    train_data: artifacts/lm_data/owt_train_32k.npy
+    valid_data: artifacts/lm_data/owt_valid_32k.npy
+    device: mps
+    seed: 0
+model:
+  desc: null
+  value:
+    vocab_size: 32000
+    context_length: 256
+    num_layers: 7
+    d_model: 640
+    num_heads: 10
+    d_ff: 1728
+    rope_theta: 10000.0
+    norm_mode: pre
+    position_encoding: rope
+    ffn_type: swiglu
+optimizer:
+  desc: null
+  value:
+    batch_size: 32
+    max_iters: 5000
+    max_lr: 0.001
+    min_lr: 0.0001
+    warmup_iters: 500
+    cosine_cycle_iters: 5000
+    weight_decay: 0.1
+    betas:
+    - 0.9
+    - 0.95
+    eps: 1.0e-08
+    grad_clip: 1.0
+logging:
+  desc: null
+  value:
+    run_name: owt_baseline_mps_large_l7_d640_h10_5k_20260603
+    out_dir: artifacts/lm_experiments/owt_arch_experiments
+    log_every: 100
+    eval_every: 1000
+    eval_iters: 20
+    sample_every: 1000
+    tokenizer: artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+    sample_prompt: The
+    sample_max_new_tokens: 120
+    sample_temperature: 0.8
+    sample_top_p: 0.9
+    wandb_project: cs336-a1
+    wandb_entity: null
+    wandb_mode: offline
+checkpoint:
+  desc: null
+  value:
+    save_every: 2500
+    resume_from: null

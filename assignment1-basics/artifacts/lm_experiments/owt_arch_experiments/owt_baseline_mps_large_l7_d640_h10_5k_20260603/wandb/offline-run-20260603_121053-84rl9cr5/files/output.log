@@ -1,0 +1,75 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_5k_20260603
+[32mConfig written to:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_5k_20260603/config.json
+[32mtrain data:[39m tokens=2,727,120,452, dtype=uint16, shape=(2727120452,)
+[32mvalid data:[39m tokens=66,401,098, dtype=uint16, shape=(66401098,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+[33mbatch smoke:[39m x.shape=(32, 256), y.shape=(32, 256), device=mps:0
+[32mmodel:[39m parameters=75,662,720, device=mps
+[32marchitecture:[39m norm_mode=pre, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(32, 256, 32000), expected=(32, 256, 32000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 5000
+[32mstep      1:[39m train_loss=10.3895, lr=0
+[32mstep    100:[39m train_loss=7.5707, lr=0.000198
+[32mstep    200:[39m train_loss=6.5300, lr=0.000398
+[32mstep    300:[39m train_loss=6.0275, lr=0.000598
+[32mstep    400:[39m train_loss=5.9058, lr=0.000798
+[32mstep    500:[39m train_loss=5.7579, lr=0.000998
+[32mstep    600:[39m train_loss=5.6172, lr=0.000998926
+[32mstep    700:[39m train_loss=5.6651, lr=0.000995664
+[32mstep    800:[39m train_loss=5.3713, lr=0.000990232
+[32mstep    900:[39m train_loss=5.5174, lr=0.000982654
+[32mstep   1000:[39m train_loss=5.2579, lr=0.000972969
+[33meval   1000:[39m valid_loss=5.3998
+[33msample 1000:[39m 'The 1008196402 was intended to act in the 21902 against its mixed-range fast-favailment in the early 706289703, and had to be a good season for the second time, and most part of a three-game deal and '
+[32mstep   1100:[39m train_loss=5.4162, lr=0.000961223
+[32mstep   1200:[39m train_loss=5.2073, lr=0.000947474
+[32mstep   1300:[39m train_loss=5.2837, lr=0.000931788
+[32mstep   1400:[39m train_loss=5.2229, lr=0.000914242
+[32mstep   1500:[39m train_loss=5.2634, lr=0.000894922
+[32mstep   1600:[39m train_loss=5.2131, lr=0.000873921
+[32mstep   1700:[39m train_loss=5.0736, lr=0.000851342
+[32mstep   1800:[39m train_loss=5.0151, lr=0.000827295
+[32mstep   1900:[39m train_loss=4.9716, lr=0.000801897
+[32mstep   2000:[39m train_loss=4.9986, lr=0.000775272
+[33meval   2000:[39m valid_loss=4.9724
+[33msample 2000:[39m 'The fact is that it would be a far more reliable, because it was the best idea of a story in the global economy.\n\nThe fact that we’ve been very concerned about how we have been of our business. It is '
+[32mstep   2100:[39m train_loss=4.9063, lr=0.000747549
+[32mstep   2200:[39m train_loss=4.9027, lr=0.000718864
+[32mstep   2300:[39m train_loss=4.9445, lr=0.000689356
+[32mstep   2400:[39m train_loss=4.7691, lr=0.00065917
+[32mstep   2500:[39m train_loss=4.8153, lr=0.000628451
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_5k_20260603/checkpoints/step_00002500.pt
+[32mstep   2600:[39m train_loss=4.8331, lr=0.00059735
+[32mstep   2700:[39m train_loss=4.6514, lr=0.000566019
+[32mstep   2800:[39m train_loss=4.7471, lr=0.000534609
+[32mstep   2900:[39m train_loss=4.6897, lr=0.000503275
+[32mstep   3000:[39m train_loss=4.7126, lr=0.000472168
+[33meval   3000:[39m valid_loss=4.6559
+[33msample 3000:[39m "The world's most beautiful planet, is about the planet, not in the world.\n\nThis is the first time in the world of the world, not in the region of Japan, but rather in the sense that it's the day and d"
+[32mstep   3100:[39m train_loss=4.7967, lr=0.00044144
+[32mstep   3200:[39m train_loss=4.6833, lr=0.000411241
+[32mstep   3300:[39m train_loss=4.7061, lr=0.000381718
+[32mstep   3400:[39m train_loss=4.6349, lr=0.000353015
+[32mstep   3500:[39m train_loss=4.6925, lr=0.000325272
+[32mstep   3600:[39m train_loss=4.5696, lr=0.000298624
+[32mstep   3700:[39m train_loss=4.4384, lr=0.0002732
+[32mstep   3800:[39m train_loss=4.6159, lr=0.000249125
+[32mstep   3900:[39m train_loss=4.7697, lr=0.000226515
+[32mstep   4000:[39m train_loss=4.5209, lr=0.000205482
+[33meval   4000:[39m valid_loss=4.5506
+[33msample 4000:[39m 'The Saudi-led military offensive system, which was founded in 2011, has launched a code base that is opposed to the end of the day.\n\nA 2001 document says that "we are concerned that there are concerns'
+[32mstep   4100:[39m train_loss=4.3244, lr=0.000186127
+[32mstep   4200:[39m train_loss=4.5144, lr=0.000168545
+[32mstep   4300:[39m train_loss=4.6166, lr=0.000152821
+[32mstep   4400:[39m train_loss=4.5490, lr=0.000139032
+[32mstep   4500:[39m train_loss=4.4089, lr=0.000127246
+[32mstep   4600:[39m train_loss=4.5614, lr=0.000117519
+[32mstep   4700:[39m train_loss=4.5018, lr=0.000109899
+[32mstep   4800:[39m train_loss=4.5994, lr=0.000104423
+[32mstep   4900:[39m train_loss=4.4158, lr=0.000101118
+[32mstep   5000:[39m train_loss=4.4890, lr=0.0001
+[33meval   5000:[39m valid_loss=4.4796
+[33msample 5000:[39m 'The largest ever recorded, even the most recent World War II in the U.S. as a result of a congressional hearing in July last year.\n\nThe last fall of the 20,000 years has been over the last year, and i'
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_5k_20260603/checkpoints/step_00005000.pt

@@ -1,0 +1,114 @@
+Transformer LM resource accounting
+Generated with Codex (GPT-5). Matrix multiply rule: 2*m*n*p FLOPs.
+
+Formula map
+  Symbols: L=num_layers, T=context_length, D=d_model, F=d_ff, V=vocab_size, H=num_heads
+  Parameters
+    token embeddings:            V * D
+    per-layer attention:         4 * D * D  # W_Q, W_K, W_V, W_O
+    per-layer SwiGLU FFN:        3 * D * F  # W1, W3, W2
+    per-layer RMSNorms:          2 * D  # ln1, ln2
+    transformer layers:          L * (4D^2 + 3DF + 2D)
+    final RMSNorm:               D
+    LM head:                     V * D
+  Forward FLOPs
+    QKV projections:             L * 3 * 2TDD
+    attention scores QK^T:       L * 2TTD  # all heads combined
+    attention weighted values:   L * 2TTD  # all heads combined
+    attention output proj:       L * 2TDD
+    SwiGLU W1/W3/W2:             L * 3 * 2TDF
+    LM head logits:              2TDV
+
+GPT-2 small shaped
+  layers=12, d_model=768, heads=12, d_head=64, d_ff=2048, ctx=1024
+  params=162.15M, fp32 memory=618.55 MiB, forward matmul FLOPs=291.65B
+
+Parameter breakdown
+  token embeddings    38.60M  23.80%
+  transformer layers  84.95M  52.39%
+  final RMSNorm       768.00   0.00%
+  LM head             38.60M  23.80%
+
+Forward FLOPs breakdown
+  QKV projections               43.49B  14.91%
+  attention scores QK^T         19.33B   6.63%
+  attention weighted values     19.33B   6.63%
+  attention output projection   14.50B   4.97%
+  SwiGLU W1/W3/W2              115.96B  39.76%
+  LM head logits                79.05B  27.10%
+
+GPT-2 medium shaped
+  layers=24, d_model=1024, heads=16, d_head=64, d_ff=2752, ctx=1024
+  params=406.54M, fp32 memory=1.51 GiB, forward matmul FLOPs=830.17B
+
+Parameter breakdown
+  token embeddings     51.46M  12.66%
+  transformer layers  303.61M  74.68%
+  final RMSNorm         1.02K   0.00%
+  LM head              51.46M  12.66%
+
+Forward FLOPs breakdown
+  QKV projections              154.62B  18.62%
+  attention scores QK^T         51.54B   6.21%
+  attention weighted values     51.54B   6.21%
+  attention output projection   51.54B   6.21%
+  SwiGLU W1/W3/W2              415.54B  50.05%
+  LM head logits               105.40B  12.70%
+
+GPT-2 large shaped
+  layers=36, d_model=1280, heads=20, d_head=64, d_ff=3392, ctx=1024
+  params=833.59M, fp32 memory=3.11 GiB, forward matmul FLOPs=1.77T
+
+Parameter breakdown
+  token embeddings     64.33M   7.72%
+  transformer layers  704.93M  84.57%
+  final RMSNorm         1.28K   0.00%
+  LM head              64.33M   7.72%
+
+Forward FLOPs breakdown
+  QKV projections              362.39B  20.49%
+  attention scores QK^T         96.64B   5.46%
+  attention weighted values     96.64B   5.46%
+  attention output projection  120.80B   6.83%
+  SwiGLU W1/W3/W2              960.33B  54.30%
+  LM head logits               131.75B   7.45%
+
+GPT-2 XL shaped
+  layers=48, d_model=1600, heads=25, d_head=64, d_ff=4288, ctx=1024
+  params=1.64B, fp32 memory=6.11 GiB, forward matmul FLOPs=3.52T
+
+Parameter breakdown
+  token embeddings    80.41M   4.90%
+  transformer layers   1.48B  90.20%
+  final RMSNorm        1.60K   0.00%
+  LM head             80.41M   4.90%
+
+Forward FLOPs breakdown
+  QKV projections              754.97B  21.47%
+  attention scores QK^T        161.06B   4.58%
+  attention weighted values    161.06B   4.58%
+  attention output projection  251.66B   7.16%
+  SwiGLU W1/W3/W2                2.02T  57.53%
+  LM head logits               164.68B   4.68%
+
+GPT-2 XL shaped, long context
+  layers=48, d_model=1600, heads=25, d_head=64, d_ff=4288, ctx=16384
+  params=1.64B, fp32 memory=6.11 GiB, forward matmul FLOPs=133.58T
+
+Parameter breakdown
+  token embeddings    80.41M   4.90%
+  transformer layers   1.48B  90.20%
+  final RMSNorm        1.60K   0.00%
+  LM head             80.41M   4.90%
+
+Forward FLOPs breakdown
+  QKV projections              12.08T   9.04%
+  attention scores QK^T        41.23T  30.87%
+  attention weighted values    41.23T  30.87%
+  attention output projection   4.03T   3.01%
+  SwiGLU W1/W3/W2              32.37T  24.24%
+  LM head logits                2.63T   1.97%
+
+Long-context note
+  Attention score/value matmuls scale as O(seq_len^2): each query attends over all keys.
+  Increasing context from 1,024 to 16,384 is 16x longer, so these quadratic terms grow by 16^2 = 256x.

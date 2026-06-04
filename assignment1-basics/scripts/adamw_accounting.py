@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import math
+import os
+import sys
 from dataclasses import dataclass
 
 
@@ -11,16 +13,17 @@ from dataclasses import dataclass
 BYTES_PER_FLOAT32 = 4
 H100_TF32_FLOPS = 495e12
 MFU = 0.50
+USE_COLOR = sys.stdout.isatty() and not os.environ.get("NO_COLOR")
 
 
 class C:
-    RESET = "\033[0m"
-    BOLD = "\033[1m"
-    DIM = "\033[2m"
-    CYAN = "\033[36m"
-    GREEN = "\033[32m"
-    YELLOW = "\033[33m"
-    MAGENTA = "\033[35m"
+    RESET = "\033[0m" if USE_COLOR else ""
+    BOLD = "\033[1m" if USE_COLOR else ""
+    DIM = "\033[2m" if USE_COLOR else ""
+    CYAN = "\033[36m" if USE_COLOR else ""
+    GREEN = "\033[32m" if USE_COLOR else ""
+    YELLOW = "\033[33m" if USE_COLOR else ""
+    MAGENTA = "\033[35m" if USE_COLOR else ""
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,23 @@
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_setup.py:_flush():81] Current SDK version is 0.25.1
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_setup.py:_flush():81] Configure stats pid to 34597
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_init.py:setup_run_log_directory():717] Logging user logs to artifacts/lm_experiments/owt_baseline/owt_baseline_mps_compile_probe/wandb/offline-run-20260602_165106-mq8v5q3k/logs/debug.log
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to artifacts/lm_experiments/owt_baseline/owt_baseline_mps_compile_probe/wandb/offline-run-20260602_165106-mq8v5q3k/logs/debug-internal.log
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_init.py:init():844] calling init triggers
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'data': {'train_data': 'artifacts/lm_data/owt_train_32k.npy', 'valid_data': 'artifacts/lm_data/owt_valid_32k.npy', 'device': 'mps', 'seed': 0}, 'model': {'vocab_size': 32000, 'context_length': 256, 'num_layers': 4, 'd_model': 512, 'num_heads': 16, 'd_ff': 1344, 'rope_theta': 10000.0, 'norm_mode': 'pre', 'position_encoding': 'rope', 'ffn_type': 'swiglu'}, 'optimizer': {'batch_size': 32, 'max_iters': 5000, 'max_lr': 0.002, 'min_lr': 0.0002, 'warmup_iters': 500, 'cosine_cycle_iters': 5000, 'weight_decay': 0.1, 'betas': [0.9, 0.95], 'eps': 1e-08, 'grad_clip': 1.0}, 'logging': {'run_name': 'owt_baseline_mps_compile_probe', 'out_dir': 'artifacts/lm_experiments/owt_baseline', 'log_every': 100, 'eval_every': 1000, 'eval_iters': 20, 'sample_every': 1000, 'tokenizer': 'artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k', 'sample_prompt': 'The', 'sample_max_new_tokens': 120, 'sample_temperature': 0.8, 'sample_top_p': 0.9, 'wandb_project': 'cs336-a1', 'wandb_entity': None, 'wandb_mode': 'offline'}, 'checkpoint': {'save_every': 2500, 'resume_from': None}, '_wandb': {}}
+2026-06-02 16:51:06,076 INFO    MainThread:34597 [wandb_init.py:init():892] starting backend
+2026-06-02 16:51:06,302 INFO    MainThread:34597 [wandb_init.py:init():895] sending inform_init request
+2026-06-02 16:51:06,327 INFO    MainThread:34597 [wandb_init.py:init():903] backend started and connected
+2026-06-02 16:51:06,339 INFO    MainThread:34597 [wandb_init.py:init():973] updated telemetry
+2026-06-02 16:51:06,347 INFO    MainThread:34597 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-06-02 16:51:06,436 INFO    MainThread:34597 [wandb_init.py:init():1042] starting run threads in backend
+2026-06-02 16:51:06,458 INFO    MainThread:34597 [wandb_run.py:_console_start():2524] atexit reg
+2026-06-02 16:51:06,458 INFO    MainThread:34597 [wandb_run.py:_redirect():2373] redirect: wrap_raw
+2026-06-02 16:51:06,458 INFO    MainThread:34597 [wandb_run.py:_redirect():2442] Wrapping output streams.
+2026-06-02 16:51:06,458 INFO    MainThread:34597 [wandb_run.py:_redirect():2465] Redirects installed.
+2026-06-02 16:51:06,460 INFO    MainThread:34597 [wandb_init.py:init():1082] run started, returning control to user process
+2026-06-02 17:36:40,721 INFO    MainThread:34597 [wandb_run.py:_finish():2291] finishing run cs336-a1/mq8v5q3k
+2026-06-02 17:36:40,722 INFO    MainThread:34597 [wandb_run.py:_atexit_cleanup():2490] got exitcode: 0
+2026-06-02 17:36:40,723 INFO    MainThread:34597 [wandb_run.py:_restore():2472] restore
+2026-06-02 17:36:40,723 INFO    MainThread:34597 [wandb_run.py:_restore():2478] restore done

@@ -1,4 +1,4 @@
-# Experiment Runs
+# Experiment Runs on M5 MacBook Air
 
 Run commands from `assignment1-basics/`.
 
@@ -10,6 +10,7 @@ This file records concrete training/evaluation runs. Keep script usage details i
 MPS check on 2026-05-31:
 
 Stable wheels tested in this environment:
+
 ```text
 torch 2.9.0   mps built True   mps available False
 torch 2.10.0  mps built True   mps available False
@@ -55,7 +56,6 @@ tokens.
   --log-every 50 --eval-every 500 --eval-iters 20 --save-every 1000 \
   --sample-every 500 --sample-prompt "Once upon a time" --sample-max-new-tokens 80 --sample-temperature 0.8 --sample-top-p 0.9
 ```
-
 
 ### CPU and MPS
 
@@ -119,3 +119,11 @@ Run command:
 ```bash
 DEVICE=mps scripts/run_tinystories_ablation_study.sh
 ```
+
+
+
+
+Notes:
+Increasing depth from the successful 6-layer d_model=640 model toward deeper variants pushed the MPS setup close to the memory limit. In the 8-layer d_model=640 probe, the model had 80,620,160 parameters and passed the forward smoke test, but GPU usage became less stable and swap increased. 
+
+Compared with the 6-layer run, wall-clock speed slowed disproportionately, suggesting that the larger model crossed a practical memory/throughput threshold on the M5 MacBook Air. Therefore, the largest sustainable configuration for stable MPS utilization appears to be around the 6-layer d_model=640 setup, or possibly a 7-layer intermediate model.

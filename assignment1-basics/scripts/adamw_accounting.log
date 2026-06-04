@@ -1,0 +1,66 @@
+AdamW training resource accounting
+Generated with Codex (GPT-5). Assume float32 for every tensor.
+
+Algebraic setup
+  B=batch_size, V=vocab_size, T=context_length, L=num_layers, D=d_model, H=num_heads, F=8D/3
+  P                        2VD + L(4D^2 + 3DF + 2D) + D  # trainable parameters
+  block_activations
+    RMSNorms               2TD  # ln1 and ln2
+    QKV projections        3TD  # Q, K, V
+    QK^T scores            HT^2  # attention scores
+    softmax                HT^2  # attention probabilities
+    weighted values        TD  # attention output before W_O
+    output projection      TD  # W_O output
+    SwiGLU W1/W3           2TF  # two up-projection branches
+    SiLU gate              TF  # activation on gate branch
+    elementwise product    TF  # SwiGLU gated hidden
+    SwiGLU W2              TD  # down-projection output
+  block_activations        8TD + 4TF + 2HT^2  # simplified
+  activations_per_batch_item
+    transformer blocks     L * block_activations
+    final RMSNorm          TD
+    output logits          TV
+    cross-entropy          TV
+  activations_per_batch_item L*block_activations + TD + TV + TV
+                           = L(8TD + 4TF + 2HT^2) + TD + 2TV  # simplified
+  memory_params            4 * P bytes  # parameters
+  memory_gradients         4 * P bytes  # gradients
+  memory_optim_state       8 * P bytes  # AdamW m and v
+  memory_activations       4 * B * activations_per_batch_item bytes  # saved activations
+  total_peak_memory        16 * P + 4 * B * activations_per_batch_item bytes  # params + grads + state + activations
+
+GPT-2 XL shaped memory
+  V=50257, T=1024, L=48, D=1600, H=25, F=8D/3=4266.67
+  parameters P:             1.64B
+  activations per batch:    4.09B floats
+  total memory expression:  15.23 GiB * batch_size + 24.37 GiB
+  max batch under 80 GiB:   3
+
+Activation breakdown per batch item
+  block RMSNorms                    157.29M floats   3.85%
+  MHA QKV projections               235.93M floats   5.77%
+  MHA QK^T scores                     1.26B floats  30.77%
+  MHA softmax                         1.26B floats  30.77%
+  MHA weighted values                78.64M floats   1.92%
+  MHA output projection              78.64M floats   1.92%
+  SwiGLU W1/W3                      419.43M floats  10.26%
+  SwiGLU SiLU gate                  209.72M floats   5.13%
+  SwiGLU elementwise product        209.72M floats   5.13%
+  SwiGLU W2                          78.64M floats   1.92%
+  final RMSNorm                       1.64M floats   0.04%
+  output embedding logits            51.46M floats   1.26%
+  cross-entropy on logits            51.46M floats   1.26%
+
+AdamW compute and H100 time
+  AdamW FLOPs per parameter
+    weight decay     mul + sub = 2  # theta <- theta - lr * wd * theta
+    m update         2 mul + add = 3  # m <- beta1*m + (1-beta1)*g
+    v update         square + 2 mul + add = 4  # v <- beta2*v + (1-beta2)*g^2
+    Adam update      sqrt + add + div + mul + sub = 5  # theta update with m/sqrt(v)
+  AdamW optimizer FLOPs:     ~14 FLOPs/parameter = 22.90B FLOPs per optimizer step
+  forward FLOPs / sequence: 3.51T
+  training step uses forward + backward, and backward is assumed to be 2x forward.
+  with batch_size=1024: 1024 * 3 * 3.51T + 22.90B
+  train step FLOPs:         batch_size * 3 * forward + AdamW = 10,772.62T (10.77P)
+  H100 effective FLOPs/s:   247.50T FLOP/s at 50% MFU
+  400,000 steps, batch=1024: 4836.19 hours

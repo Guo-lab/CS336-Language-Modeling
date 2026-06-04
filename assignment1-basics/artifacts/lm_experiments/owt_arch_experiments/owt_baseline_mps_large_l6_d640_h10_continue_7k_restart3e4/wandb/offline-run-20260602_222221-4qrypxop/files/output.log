@@ -1,0 +1,38 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l6_d640_h10_continue_7k_restart3e4
+[32mConfig written to:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l6_d640_h10_continue_7k_restart3e4/config.json
+[32mtrain data:[39m tokens=2,727,120,452, dtype=uint16, shape=(2727120452,)
+[32mvalid data:[39m tokens=66,401,098, dtype=uint16, shape=(66401098,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+[33mbatch smoke:[39m x.shape=(32, 256), y.shape=(32, 256), device=mps:0
+[33mresumed:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l6_d640_h10_20260602/checkpoints/step_00005000.pt at iteration 5000
+[32mmodel:[39m parameters=70,705,280, device=mps
+[32marchitecture:[39m norm_mode=pre, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(32, 256, 32000), expected=(32, 256, 32000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 5000 to 7000
+[32mstep   5100:[39m train_loss=4.6604, lr=0.000295202
+[32mstep   5200:[39m train_loss=4.5400, lr=0.000281086
+[32mstep   5300:[39m train_loss=4.4714, lr=0.000259032
+[32mstep   5400:[39m train_loss=4.5191, lr=0.0002312
+[32mstep   5500:[39m train_loss=4.5265, lr=0.000200314
+[32mstep   5600:[39m train_loss=4.4029, lr=0.000169397
+[32mstep   5700:[39m train_loss=4.4435, lr=0.000141476
+[32mstep   5800:[39m train_loss=4.4379, lr=0.000119283
+[32mstep   5900:[39m train_loss=4.4308, lr=0.000104992
+[32mstep   6000:[39m train_loss=4.3396, lr=0.0001
+[33meval   6000:[39m valid_loss=4.4199
+[33msample 6000:[39m 'The most recent incident happened on Sunday.\n\nA 2012 video in which an undercover agent died while in a car accident, a Russian police spokesman said on Sunday that a child who was a US citizen had di'
+[32mstep   6100:[39m train_loss=4.5088, lr=0.0001
+[32mstep   6200:[39m train_loss=4.3385, lr=0.0001
+[32mstep   6300:[39m train_loss=4.4265, lr=0.0001
+[32mstep   6400:[39m train_loss=4.3125, lr=0.0001
+[32mstep   6500:[39m train_loss=4.4180, lr=0.0001
+[32mstep   6600:[39m train_loss=4.4470, lr=0.0001
+[32mstep   6700:[39m train_loss=4.4002, lr=0.0001
+[32mstep   6800:[39m train_loss=4.3147, lr=0.0001
+[32mstep   6900:[39m train_loss=4.2577, lr=0.0001
+[32mstep   7000:[39m train_loss=4.2957, lr=0.0001
+[33meval   7000:[39m valid_loss=4.4416
+[33msample 7000:[39m 'The Pre-Aid Bury is a wonderful journey to the South American and the World is the place of the era of North American culture.\n\nAnd here’s the bit about the American Revolution:\n\nIn the 1960s, we were'
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l6_d640_h10_continue_7k_restart3e4/checkpoints/step_00007000.pt

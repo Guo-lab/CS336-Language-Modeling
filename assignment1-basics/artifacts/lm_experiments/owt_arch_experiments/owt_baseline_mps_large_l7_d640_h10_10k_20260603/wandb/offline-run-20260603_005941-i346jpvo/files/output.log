@@ -1,0 +1,137 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_10k_20260603
+[32mConfig written to:[39m artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_10k_20260603/config.json
+[32mtrain data:[39m tokens=2,727,120,452, dtype=uint16, shape=(2727120452,)
+[32mvalid data:[39m tokens=66,401,098, dtype=uint16, shape=(66401098,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+[33mbatch smoke:[39m x.shape=(32, 256), y.shape=(32, 256), device=mps:0
+[32mmodel:[39m parameters=75,662,720, device=mps
+[32marchitecture:[39m norm_mode=pre, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(32, 256, 32000), expected=(32, 256, 32000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 10000
+[32mstep      1:[39m train_loss=10.3895, lr=0
+[32mstep    100:[39m train_loss=7.2399, lr=0.000396
+[32mstep    200:[39m train_loss=6.3435, lr=0.000796
+[32mstep    300:[39m train_loss=5.9238, lr=0.001196
+[32mstep    400:[39m train_loss=5.8613, lr=0.001596
+[32mstep    500:[39m train_loss=5.7918, lr=0.001996
+[32mstep    600:[39m train_loss=5.6732, lr=0.00199948
+[32mstep    700:[39m train_loss=5.7467, lr=0.00199789
+[32mstep    800:[39m train_loss=5.4597, lr=0.00199524
+[32mstep    900:[39m train_loss=5.6030, lr=0.00199152
+[32mstep   1000:[39m train_loss=5.3485, lr=0.00198676
+[33meval   1000:[39m valid_loss=5.5030
+[33msample 1000:[39m 'TheDC itself was expected to be a perfect search for the prime fund and sent the email to the agency.\n\nOn March 27, the court arrested in January was on a set of inquiry that was the first set of stat'
+[32mstep   1100:[39m train_loss=5.5233, lr=0.00198093
+[32mstep   1200:[39m train_loss=5.3194, lr=0.00197407
+[32mstep   1300:[39m train_loss=5.4120, lr=0.00196616
+[32mstep   1400:[39m train_loss=5.3290, lr=0.00195723
+[32mstep   1500:[39m train_loss=5.4068, lr=0.00194728
+[32mstep   1600:[39m train_loss=5.3372, lr=0.00193632
+[32mstep   1700:[39m train_loss=5.1890, lr=0.00192436
+[32mstep   1800:[39m train_loss=5.1434, lr=0.00191142
+[32mstep   1900:[39m train_loss=5.1369, lr=0.00189751
+[32mstep   2000:[39m train_loss=5.1493, lr=0.00188264
+[33meval   2000:[39m valid_loss=5.1203
+[33msample 2000:[39m 'The Caps are the two speakers.\n\nThe Fetes are a very rich and well-known for the basic assembly. The Hocons are probably not good, but as the result, the nature of the ovies. This special source will '
+[32mstep   2100:[39m train_loss=5.0587, lr=0.00186684
+[32mstep   2200:[39m train_loss=5.0535, lr=0.00185011
+[32mstep   2300:[39m train_loss=5.1224, lr=0.00183249
+[32mstep   2400:[39m train_loss=4.9210, lr=0.00181398
+[32mstep   2500:[39m train_loss=4.9677, lr=0.00179461
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_10k_20260603/checkpoints/step_00002500.pt
+[32mstep   2600:[39m train_loss=5.0126, lr=0.0017744
+[32mstep   2700:[39m train_loss=4.7930, lr=0.00175337
+[32mstep   2800:[39m train_loss=4.9204, lr=0.00173154
+[32mstep   2900:[39m train_loss=4.8582, lr=0.00170894
+[32mstep   3000:[39m train_loss=4.8731, lr=0.00168559
+[33meval   3000:[39m valid_loss=4.8188
+[33msample 3000:[39m "The other day in the day, and I've got some inspiration to see some of the scenes on this site.\n\nI also said it was the first time to start, and I had to go in to leave the camera. It's hard to think "
+[32mstep   3100:[39m train_loss=4.9762, lr=0.00166152
+[32mstep   3200:[39m train_loss=4.8646, lr=0.00163675
+[32mstep   3300:[39m train_loss=4.8663, lr=0.00161131
+[32mstep   3400:[39m train_loss=4.7804, lr=0.00158523
+[32mstep   3500:[39m train_loss=4.8664, lr=0.00155854
+[32mstep   3600:[39m train_loss=4.7469, lr=0.00153127
+[32mstep   3700:[39m train_loss=4.6145, lr=0.00150344
+[32mstep   3800:[39m train_loss=4.7970, lr=0.00147509
+[32mstep   3900:[39m train_loss=4.9394, lr=0.00144625
+[32mstep   4000:[39m train_loss=4.7105, lr=0.00141695
+[33meval   4000:[39m valid_loss=4.7274
+[33msample 4000:[39m 'The efficiency for the seed is high, but the screech could have higher pathologies, and thus a higher flow of growth. The mixer produced a narrow, known peak temperature of the modern world with a sma'
+[32mstep   4100:[39m train_loss=4.4994, lr=0.00138722
+[32mstep   4200:[39m train_loss=4.6731, lr=0.00135709
+[32mstep   4300:[39m train_loss=4.7931, lr=0.0013266
+[32mstep   4400:[39m train_loss=4.7022, lr=0.00129578
+[32mstep   4500:[39m train_loss=4.5443, lr=0.00126466
+[32mstep   4600:[39m train_loss=4.7114, lr=0.00123328
+[32mstep   4700:[39m train_loss=4.6536, lr=0.00120168
+[32mstep   4800:[39m train_loss=4.7395, lr=0.00116988
+[32mstep   4900:[39m train_loss=4.5579, lr=0.00113792
+[32mstep   5000:[39m train_loss=4.6129, lr=0.00110584
+[33meval   5000:[39m valid_loss=4.6040
+[33msample 5000:[39m 'The Italian philosopher, who is the editor of the museum, said, “They are now a great place, they are able to live. I am a proud and friendly man and I have an experience that they are well-known to m'
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_10k_20260603/checkpoints/step_00005000.pt
+[32mstep   5100:[39m train_loss=4.4474, lr=0.00107367
+[32mstep   5200:[39m train_loss=4.7515, lr=0.00104144
+[32mstep   5300:[39m train_loss=4.6108, lr=0.0010092
+[32mstep   5400:[39m train_loss=4.4816, lr=0.000976978
+[32mstep   5500:[39m train_loss=4.3783, lr=0.000944806
+[32mstep   5600:[39m train_loss=4.4965, lr=0.000912723
+[32mstep   5700:[39m train_loss=4.4798, lr=0.000880762
+[32mstep   5800:[39m train_loss=4.4676, lr=0.000848959
+[32mstep   5900:[39m train_loss=4.5119, lr=0.000817348
+[32mstep   6000:[39m train_loss=4.4276, lr=0.000785964
+[33meval   6000:[39m valid_loss=4.4805
+[33msample 6000:[39m 'The sole point of the song is the mark that they are not the sort of wicked person who has died on the side.\n\nThis is the one-stop note that this is not the first one that has died, which is the basis'
+[32mstep   6100:[39m train_loss=4.3671, lr=0.000754842
+[32mstep   6200:[39m train_loss=4.4378, lr=0.000724015
+[32mstep   6300:[39m train_loss=4.4094, lr=0.000693517
+[32mstep   6400:[39m train_loss=4.4342, lr=0.000663382
+[32mstep   6500:[39m train_loss=4.3086, lr=0.000633642
+[32mstep   6600:[39m train_loss=4.5827, lr=0.00060433
+[32mstep   6700:[39m train_loss=4.3795, lr=0.000575478
+[32mstep   6800:[39m train_loss=4.3862, lr=0.000547118
+[32mstep   6900:[39m train_loss=4.3668, lr=0.00051928
+[32mstep   7000:[39m train_loss=4.5595, lr=0.000491995
+[33meval   7000:[39m valid_loss=4.3963
+[33msample 7000:[39m 'The last move was rejected by the city of San Diego, and the mayor of San Diego, a few months after the city was shut down by the city.\n\n“We saw the city as a place to live. We had to keep it up.”\n\nTh'
+[32mstep   7100:[39m train_loss=4.3005, lr=0.000465294
+[32mstep   7200:[39m train_loss=4.2518, lr=0.000439204
+[32mstep   7300:[39m train_loss=4.4700, lr=0.000413754
+[32mstep   7400:[39m train_loss=4.5817, lr=0.000388973
+[32mstep   7500:[39m train_loss=4.1925, lr=0.000364888
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_10k_20260603/checkpoints/step_00007500.pt
+[32mstep   7600:[39m train_loss=4.3897, lr=0.000341524
+[32mstep   7700:[39m train_loss=4.3023, lr=0.000318908
+[32mstep   7800:[39m train_loss=4.3380, lr=0.000297064
+[32mstep   7900:[39m train_loss=4.3954, lr=0.000276015
+[32mstep   8000:[39m train_loss=4.1535, lr=0.000255786
+[33meval   8000:[39m valid_loss=4.3003
+[33msample 8000:[39m 'The WPIGX-5 is being supported by the EATRICLF-5 is a new standard for any map of the map, with the following map.\n\nWhat is the map?\n\nStranetted with the size of the map is as follows:\n\nA map is of th'
+[32mstep   8100:[39m train_loss=4.3921, lr=0.000236398
+[32mstep   8200:[39m train_loss=4.2411, lr=0.000217872
+[32mstep   8300:[39m train_loss=4.2967, lr=0.000200229
+[32mstep   8400:[39m train_loss=4.2824, lr=0.000183488
+[32mstep   8500:[39m train_loss=4.1826, lr=0.000167667
+[32mstep   8600:[39m train_loss=4.2660, lr=0.000152783
+[32mstep   8700:[39m train_loss=4.1470, lr=0.000138853
+[32mstep   8800:[39m train_loss=4.3018, lr=0.000125892
+[32mstep   8900:[39m train_loss=4.2478, lr=0.000113914
+[32mstep   9000:[39m train_loss=4.2566, lr=0.000102933
+[33meval   9000:[39m valid_loss=4.2488
+[33msample 9000:[39m 'The story is about a massive new tale of the disease. He has had great success with the story. The story is going to be a very emotional and has a profound impact on his family. I hope he can also mak'
+[32mstep   9100:[39m train_loss=4.0134, lr=9.29597e-05
+[32mstep   9200:[39m train_loss=4.2929, lr=8.40057e-05
+[32mstep   9300:[39m train_loss=4.3454, lr=7.60806e-05
+[32mstep   9400:[39m train_loss=4.1907, lr=6.91931e-05
+[32mstep   9500:[39m train_loss=4.1442, lr=6.33509e-05
+[32mstep   9600:[39m train_loss=4.0362, lr=5.85601e-05
+[32mstep   9700:[39m train_loss=4.1843, lr=5.48262e-05
+[32mstep   9800:[39m train_loss=4.2141, lr=5.21531e-05
+[32mstep   9900:[39m train_loss=4.2150, lr=5.05438e-05
+[32mstep  10000:[39m train_loss=4.1871, lr=5.00001e-05
+[33meval  10000:[39m valid_loss=4.2193
+[33msample 10000:[39m 'The first great story about it is that you can never have a bad feeling.\n\nYes, it’s quite another story.\n\nThe characters that came out of the interview this year are not the ones that were in the stor'
+checkpoint saved: artifacts/lm_experiments/owt_arch_experiments/owt_baseline_mps_large_l7_d640_h10_10k_20260603/checkpoints/step_00010000.pt
