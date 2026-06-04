@@ -1,0 +1,74 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l6_d640_h10_bs16_cuda_20260603
+[32mConfig written to:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l6_d640_h10_bs16_cuda_20260603/config.json
+[32mtrain data:[39m tokens=2,727,120,452, dtype=uint16, shape=(2727120452,)
+[32mvalid data:[39m tokens=66,401,098, dtype=uint16, shape=(66401098,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+[33mbatch smoke:[39m x.shape=(16, 256), y.shape=(16, 256), device=cuda:0
+[32mmodel:[39m parameters=70,705,280, device=cuda
+[32marchitecture:[39m norm_mode=pre, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(16, 256, 32000), expected=(16, 256, 32000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 10000
+[32mstep      1:[39m train_loss=10.4043, lr=0
+[32mstep    200:[39m train_loss=7.1717, lr=0.000199
+[32mstep    400:[39m train_loss=6.6183, lr=0.000399
+[32mstep    600:[39m train_loss=5.9910, lr=0.000599
+[32mstep    800:[39m train_loss=5.9731, lr=0.000799
+[32mstep   1000:[39m train_loss=5.8174, lr=0.000999
+[32mstep   1200:[39m train_loss=5.7724, lr=0.000998915
+[32mstep   1400:[39m train_loss=5.8112, lr=0.000995642
+[32mstep   1600:[39m train_loss=5.4279, lr=0.000990199
+[32mstep   1800:[39m train_loss=5.7768, lr=0.000982611
+[32mstep   2000:[39m train_loss=5.4617, lr=0.000972915
+[33meval   2000:[39m valid_loss=5.4980
+[32mstep   2200:[39m train_loss=5.2606, lr=0.000961159
+[32mstep   2400:[39m train_loss=5.4208, lr=0.0009474
+[33msample 2500:[39m 'The researchers said the book would be a real-life job.\n\nIn particular, the petition\'s release as well as a Tim-era article for the group "the world is the key to the law and the law that is no longer'
+[32mstep   2600:[39m train_loss=5.3545, lr=0.000931705
+[32mstep   2800:[39m train_loss=5.3145, lr=0.00091415
+[32mstep   3000:[39m train_loss=5.2282, lr=0.000894821
+[32mstep   3200:[39m train_loss=5.2219, lr=0.000873812
+[32mstep   3400:[39m train_loss=5.2256, lr=0.000851225
+[32mstep   3600:[39m train_loss=5.0833, lr=0.000827171
+[32mstep   3800:[39m train_loss=5.1680, lr=0.000801767
+[32mstep   4000:[39m train_loss=5.2046, lr=0.000775136
+[33meval   4000:[39m valid_loss=5.0999
+[32mstep   4200:[39m train_loss=5.1038, lr=0.000747408
+[32mstep   4400:[39m train_loss=5.0544, lr=0.000718719
+[32mstep   4600:[39m train_loss=5.0259, lr=0.000689207
+[32mstep   4800:[39m train_loss=4.8418, lr=0.000659017
+[32mstep   5000:[39m train_loss=5.0361, lr=0.000628296
+[33msample 5000:[39m 'The situation is expected to be altered, and the fact that we can have had a great win for us is the last time the campaign has taken place.\n\nImage copyright Getty Images Image caption The British peo'
+checkpoint saved: artifacts/lm_experiments/cuda_baseline/owt_large_l6_d640_h10_bs16_cuda_20260603/checkpoints/step_00005000.pt
+[32mstep   5200:[39m train_loss=4.7532, lr=0.000597194
+[32mstep   5400:[39m train_loss=5.0242, lr=0.000565862
+[32mstep   5600:[39m train_loss=4.9873, lr=0.000534452
+[32mstep   5800:[39m train_loss=4.9589, lr=0.000503118
+[32mstep   6000:[39m train_loss=5.0080, lr=0.000472013
+[33meval   6000:[39m valid_loss=4.8443
+[32mstep   6200:[39m train_loss=5.1664, lr=0.000441288
+[32mstep   6400:[39m train_loss=4.6524, lr=0.000411092
+[32mstep   6600:[39m train_loss=4.9737, lr=0.000381573
+[32mstep   6800:[39m train_loss=4.6803, lr=0.000352874
+[32mstep   7000:[39m train_loss=4.8480, lr=0.000325136
+[32mstep   7200:[39m train_loss=4.7712, lr=0.000298493
+[32mstep   7400:[39m train_loss=4.6647, lr=0.000273076
+[33msample 7500:[39m 'The Times-in-Chief Committee has been hearing an alleged charge of anti-immigrant relations. The investigation has been criticized by the New York Times, the Washington Post, the New York Times, and t'
+[32mstep   7600:[39m train_loss=4.6687, lr=0.000249008
+[32mstep   7800:[39m train_loss=4.6012, lr=0.000226406
+[32mstep   8000:[39m train_loss=4.5431, lr=0.000205381
+[33meval   8000:[39m valid_loss=4.6787
+[32mstep   8200:[39m train_loss=4.8428, lr=0.000186035
+[32mstep   8400:[39m train_loss=4.7482, lr=0.000168462
+[32mstep   8600:[39m train_loss=4.7401, lr=0.000152747
+[32mstep   8800:[39m train_loss=4.5471, lr=0.000138968
+[32mstep   9000:[39m train_loss=4.5807, lr=0.000127192
+[32mstep   9200:[39m train_loss=4.6212, lr=0.000117476
+[32mstep   9400:[39m train_loss=4.4232, lr=0.000109866
+[32mstep   9600:[39m train_loss=4.4577, lr=0.000104401
+[32mstep   9800:[39m train_loss=4.8344, lr=0.000101107
+[32mstep  10000:[39m train_loss=4.4381, lr=0.0001
+[33meval  10000:[39m valid_loss=4.6098
+[33msample 10000:[39m 'The Steelers had the best talent in their draft, but not with the work he would be on.\n\nHumans lost for 1.3 yards and two touchdowns, and were keen to beat the Texas side-scoring team by the end of th'
+checkpoint saved: artifacts/lm_experiments/cuda_baseline/owt_large_l6_d640_h10_bs16_cuda_20260603/checkpoints/step_00010000.pt
