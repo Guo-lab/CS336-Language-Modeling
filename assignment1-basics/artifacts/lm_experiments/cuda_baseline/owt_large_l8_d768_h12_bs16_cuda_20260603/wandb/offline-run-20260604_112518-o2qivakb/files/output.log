@@ -1,0 +1,76 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603
+[32mConfig written to:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/config.json
+[32mtrain data:[39m tokens=2,727,120,452, dtype=uint16, shape=(2727120452,)
+[32mvalid data:[39m tokens=66,401,098, dtype=uint16, shape=(66401098,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+[33mbatch smoke:[39m x.shape=(16, 256), y.shape=(16, 256), device=cuda:0
+[33mresumed:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/checkpoints/step_00010000.pt at iteration 10000
+[32mmodel:[39m parameters=105,788,160, device=cuda
+[32marchitecture:[39m norm_mode=pre, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(16, 256, 32000), expected=(16, 256, 32000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 10000 to 20000
+[32mstep  10200:[39m train_loss=4.9023, lr=0.00045791
+[32mstep  10400:[39m train_loss=4.8171, lr=0.000446012
+[32mstep  10600:[39m train_loss=4.6575, lr=0.000434107
+[32mstep  10800:[39m train_loss=4.8202, lr=0.000422209
+[32mstep  11000:[39m train_loss=4.7321, lr=0.000410331
+[33meval  11000:[39m valid_loss=4.6846
+[32mstep  11200:[39m train_loss=4.7005, lr=0.000398485
+[32mstep  11400:[39m train_loss=4.6827, lr=0.000386684
+[32mstep  11600:[39m train_loss=4.6473, lr=0.000374942
+[32mstep  11800:[39m train_loss=4.6101, lr=0.00036327
+[32mstep  12000:[39m train_loss=4.7420, lr=0.000351683
+[33meval  12000:[39m valid_loss=4.6325
+[32mstep  12200:[39m train_loss=4.6426, lr=0.000340192
+[32mstep  12400:[39m train_loss=4.6065, lr=0.00032881
+[32mstep  12600:[39m train_loss=4.7622, lr=0.00031755
+[32mstep  12800:[39m train_loss=4.6299, lr=0.000306424
+[32mstep  13000:[39m train_loss=4.5324, lr=0.000295444
+[33meval  13000:[39m valid_loss=4.5785
+[32mstep  13200:[39m train_loss=4.6115, lr=0.000284622
+[32mstep  13400:[39m train_loss=4.2757, lr=0.00027397
+[32mstep  13600:[39m train_loss=4.5178, lr=0.000263499
+[32mstep  13800:[39m train_loss=4.3922, lr=0.000253222
+[32mstep  14000:[39m train_loss=4.5035, lr=0.000243148
+[33meval  14000:[39m valid_loss=4.5392
+[32mstep  14200:[39m train_loss=4.3649, lr=0.00023329
+[32mstep  14400:[39m train_loss=4.7029, lr=0.000223658
+[32mstep  14600:[39m train_loss=4.1952, lr=0.000214263
+[32mstep  14800:[39m train_loss=4.4217, lr=0.000205114
+[32mstep  15000:[39m train_loss=4.4566, lr=0.000196222
+[33meval  15000:[39m valid_loss=4.4950
+checkpoint saved: artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/checkpoints/step_00015000.pt
+[32mstep  15200:[39m train_loss=4.4247, lr=0.000187597
+[32mstep  15400:[39m train_loss=4.3686, lr=0.000179248
+[32mstep  15600:[39m train_loss=4.5982, lr=0.000171184
+[32mstep  15800:[39m train_loss=4.2258, lr=0.000163414
+[32mstep  16000:[39m train_loss=4.6034, lr=0.000155946
+[33meval  16000:[39m valid_loss=4.4430
+[32mstep  16200:[39m train_loss=4.3424, lr=0.000148789
+[32mstep  16400:[39m train_loss=4.1607, lr=0.00014195
+[32mstep  16600:[39m train_loss=4.2078, lr=0.000135437
+[32mstep  16800:[39m train_loss=4.2731, lr=0.000129258
+[32mstep  17000:[39m train_loss=4.2054, lr=0.000123418
+[33meval  17000:[39m valid_loss=4.4110
+[32mstep  17200:[39m train_loss=4.4138, lr=0.000117924
+[32mstep  17400:[39m train_loss=4.4775, lr=0.000112782
+[32mstep  17600:[39m train_loss=4.5572, lr=0.000107999
+[32mstep  17800:[39m train_loss=4.2766, lr=0.000103578
+[32mstep  18000:[39m train_loss=4.3675, lr=9.95251e-05
+[33meval  18000:[39m valid_loss=4.4159
+[32mstep  18200:[39m train_loss=4.2534, lr=9.58446e-05
+[32mstep  18400:[39m train_loss=4.2947, lr=9.25404e-05
+[32mstep  18600:[39m train_loss=4.2597, lr=8.96161e-05
+[32mstep  18800:[39m train_loss=4.4305, lr=8.7075e-05
+[32mstep  19000:[39m train_loss=4.3514, lr=8.49197e-05
+[33meval  19000:[39m valid_loss=4.4007
+[32mstep  19200:[39m train_loss=4.4685, lr=8.31528e-05
+[32mstep  19400:[39m train_loss=4.3369, lr=8.17761e-05
+[32mstep  19600:[39m train_loss=4.2988, lr=8.0791e-05
+[32mstep  19800:[39m train_loss=4.4525, lr=8.01988e-05
+[32mstep  20000:[39m train_loss=4.2457, lr=8e-05
+[33meval  20000:[39m valid_loss=4.3666
+[33msample 20000:[39m 'The playoffs are so good. This week we had a difficult week with good story. When you need the match, you must be following the team and you need to be ready to go. With that, you will have to be able'
+checkpoint saved: artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/checkpoints/step_00020000.pt
