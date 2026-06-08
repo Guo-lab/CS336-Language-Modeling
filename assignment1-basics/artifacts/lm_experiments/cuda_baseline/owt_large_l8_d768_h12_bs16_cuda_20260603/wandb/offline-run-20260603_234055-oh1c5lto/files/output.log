@@ -1,0 +1,75 @@
+[36m[1mTransformer LM training
+[32mRun directory:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603
+[32mConfig written to:[39m artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/config.json
+[32mtrain data:[39m tokens=2,727,120,452, dtype=uint16, shape=(2727120452,)
+[32mvalid data:[39m tokens=66,401,098, dtype=uint16, shape=(66401098,)
+[32mtokenizer:[39m artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+[33mbatch smoke:[39m x.shape=(16, 256), y.shape=(16, 256), device=cuda:0
+[32mmodel:[39m parameters=105,788,160, device=cuda
+[32marchitecture:[39m norm_mode=pre, position_encoding=rope, ffn_type=swiglu
+[33mforward smoke:[39m logits.shape=(16, 256, 32000), expected=(16, 256, 32000)
+[36m[1mStarting training loop
+[32mrange:[39m from iteration 0 to 10000
+[32mstep      1:[39m train_loss=10.3862, lr=0
+[32mstep    200:[39m train_loss=7.1360, lr=0.0001592
+[32mstep    400:[39m train_loss=6.6025, lr=0.0003192
+[32mstep    600:[39m train_loss=5.9860, lr=0.0004792
+[32mstep    800:[39m train_loss=5.9554, lr=0.0006392
+[32mstep   1000:[39m train_loss=5.7979, lr=0.0007992
+[33meval   1000:[39m valid_loss=5.8765
+[32mstep   1200:[39m train_loss=5.7272, lr=0.000799132
+[32mstep   1400:[39m train_loss=5.6751, lr=0.000796514
+[32mstep   1600:[39m train_loss=5.6389, lr=0.000792159
+[32mstep   1800:[39m train_loss=5.4878, lr=0.000786089
+[32mstep   2000:[39m train_loss=5.5598, lr=0.000778332
+[33meval   2000:[39m valid_loss=5.4666
+[32mstep   2200:[39m train_loss=5.4964, lr=0.000768927
+[32mstep   2400:[39m train_loss=5.3671, lr=0.00075792
+[32mstep   2600:[39m train_loss=5.4888, lr=0.000745364
+[32mstep   2800:[39m train_loss=5.3382, lr=0.00073132
+[32mstep   3000:[39m train_loss=5.2311, lr=0.000715857
+[33meval   3000:[39m valid_loss=5.2260
+[32mstep   3200:[39m train_loss=5.4377, lr=0.00069905
+[32mstep   3400:[39m train_loss=4.9151, lr=0.00068098
+[32mstep   3600:[39m train_loss=5.0466, lr=0.000661737
+[32mstep   3800:[39m train_loss=4.9920, lr=0.000641414
+[32mstep   4000:[39m train_loss=5.0711, lr=0.000620109
+[33meval   4000:[39m valid_loss=5.0557
+[32mstep   4200:[39m train_loss=4.8926, lr=0.000597927
+[32mstep   4400:[39m train_loss=5.2718, lr=0.000574975
+[32mstep   4600:[39m train_loss=4.6990, lr=0.000551366
+[32mstep   4800:[39m train_loss=4.9439, lr=0.000527214
+[32mstep   5000:[39m train_loss=4.9781, lr=0.000502637
+[33meval   5000:[39m valid_loss=4.9144
+[32mstep   5200:[39m train_loss=4.8899, lr=0.000477755
+[32mstep   5400:[39m train_loss=4.8498, lr=0.000452689
+[32mstep   5600:[39m train_loss=5.0444, lr=0.000427562
+[32mstep   5800:[39m train_loss=4.6734, lr=0.000402495
+[32mstep   6000:[39m train_loss=5.0378, lr=0.00037761
+[33meval   6000:[39m valid_loss=4.7727
+[32mstep   6200:[39m train_loss=4.7352, lr=0.00035303
+[32mstep   6400:[39m train_loss=4.7058, lr=0.000328873
+[32mstep   6600:[39m train_loss=4.5372, lr=0.000305258
+[32mstep   6800:[39m train_loss=4.5889, lr=0.000282299
+[32mstep   7000:[39m train_loss=4.5213, lr=0.000260109
+[33meval   7000:[39m valid_loss=4.6794
+[32mstep   7200:[39m train_loss=4.7136, lr=0.000238795
+[32mstep   7400:[39m train_loss=4.7925, lr=0.000218461
+[32mstep   7600:[39m train_loss=4.8806, lr=0.000199206
+[32mstep   7800:[39m train_loss=4.5598, lr=0.000181125
+[32mstep   8000:[39m train_loss=4.6588, lr=0.000164305
+[33meval   8000:[39m valid_loss=4.6353
+[32mstep   8200:[39m train_loss=4.5518, lr=0.000148828
+[32mstep   8400:[39m train_loss=4.5140, lr=0.000134769
+[32mstep   8600:[39m train_loss=4.4970, lr=0.000122198
+[32mstep   8800:[39m train_loss=4.6476, lr=0.000111175
+[32mstep   9000:[39m train_loss=4.5296, lr=0.000101754
+[33meval   9000:[39m valid_loss=4.5868
+[32mstep   9200:[39m train_loss=4.6586, lr=9.39804e-05
+[32mstep   9400:[39m train_loss=4.5238, lr=8.7893e-05
+[32mstep   9600:[39m train_loss=4.5177, lr=8.3521e-05
+[32mstep   9800:[39m train_loss=4.6553, lr=8.08857e-05
+[32mstep  10000:[39m train_loss=4.5490, lr=8e-05
+[33meval  10000:[39m valid_loss=4.5332
+[33msample 10000:[39m 'The conditions of control are no longer necessary, and to cause further confusion on how to ensure that Congress has no access to the medical care. The final act of creating the medical care legislati'
+checkpoint saved: artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/checkpoints/step_00010000.pt
