@@ -1,0 +1,188 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.13.13
+    cli_version: 0.25.1
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1780597518
+    t:
+      1:
+      - 1
+      2:
+      - 1
+      3:
+      - 2
+      - 4
+      - 13
+      - 16
+      - 42
+      - 61
+      4: 3.13.13
+      5: 0.25.1
+      13: linux-x86_64
+    e:
+      jbdyzg64c0pku5rz2zallkr80o3bsr86:
+        os: Linux-6.8.0-124-generic-x86_64-with-glibc2.35
+        python: CPython 3.13.13
+        started_at: '2026-06-04T18:25:18.361702Z'
+        args:
+        - --train-data
+        - artifacts/lm_data/owt_train_32k.npy
+        - --valid-data
+        - artifacts/lm_data/owt_valid_32k.npy
+        - --tokenizer
+        - artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+        - --run-name
+        - owt_large_l8_d768_h12_bs16_cuda_20260603
+        - --out-dir
+        - artifacts/lm_experiments/cuda_baseline
+        - --device
+        - cuda
+        - --seed
+        - '0'
+        - --vocab-size
+        - '32000'
+        - --context-length
+        - '256'
+        - --batch-size
+        - '16'
+        - --num-layers
+        - '8'
+        - --d-model
+        - '768'
+        - --num-heads
+        - '12'
+        - --d-ff
+        - '2048'
+        - --max-iters
+        - '20000'
+        - --warmup-iters
+        - '1000'
+        - --cosine-cycle-iters
+        - '20000'
+        - --max-lr
+        - 8e-4
+        - --min-lr
+        - 8e-5
+        - --weight-decay
+        - '0.1'
+        - --beta1
+        - '0.9'
+        - --beta2
+        - '0.95'
+        - --eps
+        - 1e-8
+        - --grad-clip
+        - '1.0'
+        - --log-every
+        - '200'
+        - --eval-every
+        - '1000'
+        - --eval-iters
+        - '100'
+        - --save-every
+        - '5000'
+        - --sample-every
+        - '200000'
+        - --sample-prompt
+        - The
+        - --sample-max-new-tokens
+        - '120'
+        - --sample-temperature
+        - '0.8'
+        - --sample-top-p
+        - '0.9'
+        - --wandb-project
+        - cs336-a1
+        - --wandb-mode
+        - offline
+        - --resume-from
+        - artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/checkpoints/step_00010000.pt
+        program: /home/siqi/Desktop/CS336-Language-Modeling/assignment1-basics/scripts/train_lm.py
+        code_path: assignment1-basics/scripts/train_lm.py
+        code_path_local: scripts/train_lm.py
+        git:
+          remote_url: git@github.com:Guo-lab/CS336-Language-Modeling.git
+          commit: 052584f91a7d7510178cf8ff1301161ea217c443
+        root: artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603
+        host: siqi-Thin-15-B13VF
+        executable: /home/siqi/Desktop/CS336-Language-Modeling/assignment1-basics/.venv/bin/python3
+        cpu_count: 8
+        cpu_count_logical: 12
+        gpu_type: NVIDIA GeForce RTX 4060 Laptop GPU
+        gpu_count: 1
+        disk:
+          /:
+            total: '502392610816'
+            used: '416555397120'
+        memory:
+          total: '16455405568'
+        gpu_nvidia:
+        - name: NVIDIA GeForce RTX 4060 Laptop GPU
+          memory_total: '8585740288'
+          cuda_cores: 3072
+          architecture: Ada
+          uuid: GPU-f5a4b91b-c2b5-05d6-96fc-02579309f1e0
+        cuda_version: '13.0'
+        writer_id: jbdyzg64c0pku5rz2zallkr80o3bsr86
+data:
+  desc: null
+  value:
+    train_data: artifacts/lm_data/owt_train_32k.npy
+    valid_data: artifacts/lm_data/owt_valid_32k.npy
+    device: cuda
+    seed: 0
+model:
+  desc: null
+  value:
+    vocab_size: 32000
+    context_length: 256
+    num_layers: 8
+    d_model: 768
+    num_heads: 12
+    d_ff: 2048
+    rope_theta: 10000.0
+    norm_mode: pre
+    position_encoding: rope
+    ffn_type: swiglu
+optimizer:
+  desc: null
+  value:
+    batch_size: 16
+    max_iters: 20000
+    max_lr: 0.0008
+    min_lr: 8.0e-05
+    warmup_iters: 1000
+    cosine_cycle_iters: 20000
+    weight_decay: 0.1
+    betas:
+    - 0.9
+    - 0.95
+    eps: 1.0e-08
+    grad_clip: 1.0
+logging:
+  desc: null
+  value:
+    run_name: owt_large_l8_d768_h12_bs16_cuda_20260603
+    out_dir: artifacts/lm_experiments/cuda_baseline
+    log_every: 200
+    eval_every: 1000
+    eval_iters: 100
+    sample_every: 200000
+    tokenizer: artifacts/tokenizer_experiments/training/tokenizers_chunked_mp8/owt_train_32k
+    sample_prompt: The
+    sample_max_new_tokens: 120
+    sample_temperature: 0.8
+    sample_top_p: 0.9
+    wandb_project: cs336-a1
+    wandb_entity: null
+    wandb_mode: offline
+checkpoint:
+  desc: null
+  value:
+    save_every: 5000
+    resume_from: artifacts/lm_experiments/cuda_baseline/owt_large_l8_d768_h12_bs16_cuda_20260603/checkpoints/step_00010000.pt
