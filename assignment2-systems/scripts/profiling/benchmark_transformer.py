@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import math
 import timeit
-from contextlib import contextmanager, nullcontext
 
 import torch
 import torch.nn.functional as F
@@ -15,16 +14,13 @@ import cs336_basics.nn_utils as basics_nn_utils
 from cs336_basics.model import TransformerLM
 
 from config import DTYPES, MODEL_SIZES, parse_args
-from utils import make_random_batch, print_summary, synchronize_if_needed
-
-
-@contextmanager
-def maybe_nvtx_range(name: str, enabled: bool):
-    if enabled and torch.cuda.is_available():
-        with torch.cuda.nvtx.range(name):
-            yield
-    else:
-        yield
+from contexts import autocast_context, maybe_nvtx_range, memory_history_context
+from utils import (
+    make_random_batch,
+    print_summary,
+    reset_cuda_peak_memory_stats_if_needed,
+    synchronize_if_needed,
+)
 
 
 def install_annotated_attention() -> None:
@@ -48,21 +44,11 @@ def install_annotated_attention() -> None:
                 attn_weights = basics_nn_utils.softmax(attention_scores, dim=-1)
 
             with maybe_nvtx_range("final matmul", True):
-                return einsum(attn_weights, V, "... queries keys, ... keys d_v -> ... queries d_v")
+                return einsum(
+                    attn_weights, V, "... queries keys, ... keys d_v -> ... queries d_v"
+                )
 
-    basics_nn_utils.scaled_dot_product_attention = annotated_scaled_dot_product_attention
     basics_model.scaled_dot_product_attention = annotated_scaled_dot_product_attention
-
-
-def autocast_context(args: argparse.Namespace, device: torch.device):
-    if not args.mixed_precision:
-        return nullcontext()
-    if device.type not in {"cuda", "cpu"}:
-        return nullcontext()
-    return torch.autocast(
-        device_type=device.type,
-        dtype=DTYPES[args.autocast_dtype],
-    )
 
 
 def forward_loss(
@@ -73,6 +59,7 @@ def forward_loss(
     targets: torch.Tensor,
 ) -> torch.Tensor:
     with maybe_nvtx_range("forward", args.nvtx):
+        # Autocast only the model forward; loss/backward/optimizer stay in default dtypes.
         with autocast_context(args, device):
             logits = model(token_ids)
 
@@ -130,13 +117,14 @@ def time_steps(
     synchronize_if_needed(device)
 
     times_s: list[float] = []
-    with maybe_nvtx_range("benchmark_measured_steps", args.nvtx):
-        for _ in range(args.steps):
-            synchronize_if_needed(device)
-            start = timeit.default_timer()
-            last_loss = run_step(args, device, model, optimizer, token_ids, targets)
-            synchronize_if_needed(device)
-            times_s.append(timeit.default_timer() - start)
+    with memory_history_context(args, device):
+        with maybe_nvtx_range("benchmark_measured_steps", args.nvtx):
+            for _ in range(args.steps):
+                synchronize_if_needed(device)
+                start = timeit.default_timer()
+                last_loss = run_step(args, device, model, optimizer, token_ids, targets)
+                synchronize_if_needed(device)
+                times_s.append(timeit.default_timer() - start)
 
     return times_s, last_loss
 
@@ -150,7 +138,7 @@ def main() -> None:
     device = torch.device(args.device)
     if device.type == "cuda":
         torch.cuda.empty_cache()
-        torch.cuda.reset_peak_memory_stats(device)
+        reset_cuda_peak_memory_stats_if_needed(device)
 
     token_ids, targets = make_random_batch(args, device)
 
@@ -181,8 +169,7 @@ def main() -> None:
         )
 
     try:
-        if device.type == "cuda":
-            torch.cuda.reset_peak_memory_stats(device)
+        reset_cuda_peak_memory_stats_if_needed(device)
 
         times_s, last_loss = time_steps(args, device, model, optimizer, token_ids, targets)
 

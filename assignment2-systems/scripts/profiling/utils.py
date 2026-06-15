@@ -29,6 +29,15 @@ def synchronize_if_needed(device: torch.device) -> None:
         torch.cuda.synchronize(device)
 
 
+def reset_cuda_peak_memory_stats_if_needed(device: torch.device) -> None:
+    if device.type == "cuda":
+        try:
+            torch.cuda.reset_peak_memory_stats()
+        except RuntimeError as error:
+            if "invalid argument" not in str(error):
+                raise
+
+
 def print_summary(
     args: argparse.Namespace,
     device: torch.device,
@@ -102,6 +111,7 @@ def print_summary(
     print(f"nvtx={args.nvtx}")
     print(f"memory_profile={args.memory_profile}")
     print(f"memory_snapshot_path={args.memory_snapshot_path}")
+    print(f"memory_history_max_entries={args.memory_history_max_entries}")
     print(f"last_loss={last_loss:.6f}")
     print(f"mean_ms_per_step={mean_s * 1_000:.3f}")
     print(f"std_ms_per_step={std_s * 1_000:.3f}")
@@ -113,7 +123,3 @@ def print_summary(
         peak_reserved = torch.cuda.max_memory_reserved(device)
         print(f"peak_memory_allocated_gib={peak_allocated / 1024**3:.3f}")
         print(f"peak_memory_reserved_gib={peak_reserved / 1024**3:.3f}")
-
-        if args.memory_profile:
-            torch.cuda.memory._dump_snapshot(args.memory_snapshot_path)
-            print(f"memory_snapshot_written={args.memory_snapshot_path}")

@@ -65,4 +65,10 @@ def parse_args() -> argparse.Namespace:
         default="memory_snapshot.pickle",
         help="Memory snapshot path.",
     )
+    parser.add_argument(
+        "--memory-history-max-entries",
+        type=int,
+        default=1_000_000,
+        help="Maximum number of CUDA memory allocation events to record.",
+    )
     return parser.parse_args()

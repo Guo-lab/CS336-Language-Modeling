@@ -1,0 +1,118 @@
+Memory profiling sweep for model_size=xl
+device=cuda
+batch_size=1
+warmup_steps=1
+steps=1
+contexts=128 2048
+modes=forward full_w_optimizer_step
+
+===== float32 parameter storage: fp32 vs bf16 autocast =====
+
+================================================================================
+PyTorch memory snapshots for 2.1.5
+================================================================================
+Output directory: artifacts/profiling/memory_215
+Each successful .pickle can be opened at pytorch.org/memory_viz.
+Defaults are conservative: model=xl, dtype=float32, batch_size=1, warmup=1, steps=1.
+
+================================================================================
+Peak memory table
+================================================================================
+ctx      mode                     precision status       peak_alloc  peak_reserved      mean_ms artifact
+------------------------------------------------------------------------------------------------------------------------
+128      forward                  fp32     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx128_forward_fp32.log
+xl/ctx128/forward/fp32: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx128_forward_fp32.log.
+128      forward                  bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx128_forward_bf16.log
+xl/ctx128/forward/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx128_forward_bf16.log.
+128      full_w_optimizer_step    fp32     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx128_full_w_optimizer_step_fp32.log
+xl/ctx128/full_w_optimizer_step/fp32: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx128_full_w_optimizer_step_fp32.log.
+128      full_w_optimizer_step    bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx128_full_w_optimizer_step_bf16.log
+xl/ctx128/full_w_optimizer_step/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx128_full_w_optimizer_step_bf16.log.
+2048     forward                  fp32     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx2048_forward_fp32.log
+xl/ctx2048/forward/fp32: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx2048_forward_fp32.log.
+2048     forward                  bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx2048_forward_bf16.log
+xl/ctx2048/forward/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx2048_forward_bf16.log.
+2048     full_w_optimizer_step    fp32     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx2048_full_w_optimizer_step_fp32.log
+xl/ctx2048/full_w_optimizer_step/fp32: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx2048_full_w_optimizer_step_fp32.log.
+2048     full_w_optimizer_step    bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_float32_ctx2048_full_w_optimizer_step_bf16.log
+xl/ctx2048/full_w_optimizer_step/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_float32_ctx2048_full_w_optimizer_step_bf16.log.
+
+================================================================================
+XL reference residual stream activation size
+================================================================================
+batch=1, context=128: 1 x 128 x 2560 x 4 bytes = 1.250 MiB
+batch=1, context=2048: 1 x 2048 x 2560 x 4 bytes = 20.000 MiB
+
+================================================================================
+Nsight memory profiling for part (f)
+================================================================================
+Not running Nsight by default because reports can be large.
+Run this script with --run-nsys, or run the command template below:
+
+uv run nsys profile \
+  --force-overwrite=true \
+  -o artifacts/profiling/memory_215/xl_float32_ctx128_full_w_optimizer_step_nsys_memory \
+  --trace=cuda,cudnn,cublas,osrt,nvtx \
+  --pytorch=functions-trace,autograd-shapes-nvtx \
+  --cuda-memory-usage=true \
+  -- python scripts/profiling/benchmark_transformer.py \
+    --device cuda \
+    --model-size xl \
+    --dtype float32 \
+    --mode full_w_optimizer_step \
+    --context-length 128 \
+    --batch-size 1 \
+    --warmup-steps 1 \
+    --steps 1 \
+    --nvtx
+
+===== bfloat16 parameter storage: bf16 autocast =====
+
+================================================================================
+PyTorch memory snapshots for 2.1.5
+================================================================================
+Output directory: artifacts/profiling/memory_215
+Each successful .pickle can be opened at pytorch.org/memory_viz.
+Defaults are conservative: model=xl, dtype=bfloat16, batch_size=1, warmup=1, steps=1.
+
+================================================================================
+Peak memory table
+================================================================================
+ctx      mode                     precision status       peak_alloc  peak_reserved      mean_ms artifact
+------------------------------------------------------------------------------------------------------------------------
+128      forward                  bf16     OK                6.367          6.564       80.312 artifacts/profiling/memory_215/xl_bfloat16_ctx128_forward_bf16.pickle
+128      full_w_optimizer_step    bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_bfloat16_ctx128_full_w_optimizer_step_bf16.log
+xl/ctx128/full_w_optimizer_step/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_bfloat16_ctx128_full_w_optimizer_step_bf16.log.
+2048     forward                  bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_bfloat16_ctx2048_forward_bf16.log
+xl/ctx2048/forward/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_bfloat16_ctx2048_forward_bf16.log.
+2048     full_w_optimizer_step    bf16     OOM                 n/a            n/a          n/a artifacts/profiling/memory_215/xl_bfloat16_ctx2048_full_w_optimizer_step_bf16.log
+xl/ctx2048/full_w_optimizer_step/bf16: OOM; traceback saved to artifacts/profiling/memory_215/xl_bfloat16_ctx2048_full_w_optimizer_step_bf16.log.
+
+================================================================================
+XL reference residual stream activation size
+================================================================================
+batch=1, context=128: 1 x 128 x 2560 x 4 bytes = 1.250 MiB
+batch=1, context=2048: 1 x 2048 x 2560 x 4 bytes = 20.000 MiB
+
+================================================================================
+Nsight memory profiling for part (f)
+================================================================================
+Not running Nsight by default because reports can be large.
+Run this script with --run-nsys, or run the command template below:
+
+uv run nsys profile \
+  --force-overwrite=true \
+  -o artifacts/profiling/memory_215/xl_bfloat16_ctx128_full_w_optimizer_step_nsys_memory \
+  --trace=cuda,cudnn,cublas,osrt,nvtx \
+  --pytorch=functions-trace,autograd-shapes-nvtx \
+  --cuda-memory-usage=true \
+  -- python scripts/profiling/benchmark_transformer.py \
+    --device cuda \
+    --model-size xl \
+    --dtype bfloat16 \
+    --mode full_w_optimizer_step \
+    --context-length 128 \
+    --batch-size 1 \
+    --warmup-steps 1 \
+    --steps 1 \
+    --nvtx
