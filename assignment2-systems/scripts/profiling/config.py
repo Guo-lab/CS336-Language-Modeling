@@ -54,6 +54,11 @@ def parse_args() -> argparse.Namespace:
         help="Autocast dtype.",
     )
     parser.add_argument("--nvtx", action="store_true", help="Emit NVTX ranges.")
+    parser.add_argument(
+        "--annotate-attention",
+        action="store_true",
+        help="Monkey-patch cs336_basics scaled_dot_product_attention with profiling-only NVTX ranges.",
+    )
     parser.add_argument("--memory-profile", action="store_true", help="Record mem snapshot.")
     parser.add_argument(
         "--memory-snapshot-path",

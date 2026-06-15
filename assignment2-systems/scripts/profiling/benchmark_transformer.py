@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import argparse
+import math
 import timeit
 from contextlib import contextmanager, nullcontext
 
 import torch
 import torch.nn.functional as F
+from einops import einsum
 
 
+import cs336_basics.model as basics_model
+import cs336_basics.nn_utils as basics_nn_utils
 from cs336_basics.model import TransformerLM
 
 from config import DTYPES, MODEL_SIZES, parse_args
@@ -17,13 +21,37 @@ from utils import make_random_batch, print_summary, synchronize_if_needed
 @contextmanager
 def maybe_nvtx_range(name: str, enabled: bool):
     if enabled and torch.cuda.is_available():
-        torch.cuda.nvtx.range_push(name)
-        try:
+        with torch.cuda.nvtx.range(name):
             yield
-        finally:
-            torch.cuda.nvtx.range_pop()
     else:
         yield
+
+
+def install_annotated_attention() -> None:
+    def annotated_scaled_dot_product_attention(
+        Q: torch.Tensor,
+        K: torch.Tensor,
+        V: torch.Tensor,
+        mask: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        with maybe_nvtx_range("scaled dot product attention", True):
+            d_k = Q.shape[-1]
+            with maybe_nvtx_range("computing attention scores", True):
+                QK = einsum(Q, K, "... queries d_k, ... keys d_k -> ... queries keys")
+                attention_scores = QK / math.sqrt(d_k)
+
+            if mask is not None:
+                with maybe_nvtx_range("applying causal mask", True):
+                    attention_scores = attention_scores.masked_fill(~mask, -torch.inf)
+
+            with maybe_nvtx_range("computing softmax", True):
+                attn_weights = basics_nn_utils.softmax(attention_scores, dim=-1)
+
+            with maybe_nvtx_range("final matmul", True):
+                return einsum(attn_weights, V, "... queries keys, ... keys d_v -> ... queries d_v")
+
+    basics_nn_utils.scaled_dot_product_attention = annotated_scaled_dot_product_attention
+    basics_model.scaled_dot_product_attention = annotated_scaled_dot_product_attention
 
 
 def autocast_context(args: argparse.Namespace, device: torch.device):
@@ -102,18 +130,21 @@ def time_steps(
     synchronize_if_needed(device)
 
     times_s: list[float] = []
-    for _ in range(args.steps):
-        synchronize_if_needed(device)
-        start = timeit.default_timer()
-        last_loss = run_step(args, device, model, optimizer, token_ids, targets)
-        synchronize_if_needed(device)
-        times_s.append(timeit.default_timer() - start)
+    with maybe_nvtx_range("benchmark_measured_steps", args.nvtx):
+        for _ in range(args.steps):
+            synchronize_if_needed(device)
+            start = timeit.default_timer()
+            last_loss = run_step(args, device, model, optimizer, token_ids, targets)
+            synchronize_if_needed(device)
+            times_s.append(timeit.default_timer() - start)
 
     return times_s, last_loss
 
 
 def main() -> None:
     args = parse_args()
+    if args.annotate_attention:
+        install_annotated_attention()
 
     torch.manual_seed(args.seed)
     device = torch.device(args.device)
